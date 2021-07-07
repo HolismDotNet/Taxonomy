@@ -23,7 +23,7 @@ namespace Holism.Taxonomy.Models
 
         public string IconSvg { get; set; }
 
-        public long? ParentHierarchyId { get; set; }
+        public long? ParentId { get; set; }
 
         public string Description { get; set; }
 

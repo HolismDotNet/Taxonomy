@@ -13,8 +13,6 @@ namespace Holism.Taxonomy.Models
 
         public long HierarchyId { get; set; }
 
-        public Guid EntityTypeGuid { get; set; }
-
         public Guid EntityGuid { get; set; }
 
         public int Order { get; set; }
