@@ -1,10 +1,10 @@
 using System;
 
-namespace Holism.Taxonomy.DataAccess.Models.Views
+namespace Holism.Taxonomy.Models.Views
 {
-    public class CategoryItemView : Holism.EntityFramework.IEntity
+    public class TagItemView : Holism.Models.IEntity
     {
-        public CategoryItemView()
+        public TagItemView()
         {
             RelatedItems = new System.Dynamic.ExpandoObject();
         }
@@ -15,11 +15,11 @@ namespace Holism.Taxonomy.DataAccess.Models.Views
 
         public Guid EntityGuid { get; set; }
 
-        public long CategoryId { get; set; }
+        public long TagId { get; set; }
 
         public int Order { get; set; }
 
-        public string CategoryTitle { get; set; }
+        public string TagName { get; set; }
 
         public dynamic RelatedItems { get; set; }
     }

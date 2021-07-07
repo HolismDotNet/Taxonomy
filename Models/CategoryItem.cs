@@ -1,25 +1,23 @@
 using System;
 
-namespace Holism.Taxonomy.DataAccess.Models.Views
+namespace Holism.Taxonomy.Models
 {
-    public class HierarchyItemView : Holism.EntityFramework.IEntity
+    public class CategoryItem : Holism.Models.IEntity
     {
-        public HierarchyItemView()
+        public CategoryItem()
         {
             RelatedItems = new System.Dynamic.ExpandoObject();
         }
 
         public long Id { get; set; }
 
+        public long CategoryId { get; set; }
+
         public Guid EntityTypeGuid { get; set; }
 
         public Guid EntityGuid { get; set; }
 
-        public long HierarchyId { get; set; }
-
         public int Order { get; set; }
-
-        public string HierarchyTitle { get; set; }
 
         public dynamic RelatedItems { get; set; }
     }

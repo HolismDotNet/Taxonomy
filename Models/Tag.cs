@@ -1,10 +1,10 @@
 using System;
 
-namespace Holism.Taxonomy.DataAccess.Models
+namespace Holism.Taxonomy.Models
 {
-    public class Hierarchy : Holism.EntityFramework.IEntity
+    public class Tag : Holism.Models.IEntity
     {
-        public Hierarchy()
+        public Tag()
         {
             RelatedItems = new System.Dynamic.ExpandoObject();
         }
@@ -15,15 +15,11 @@ namespace Holism.Taxonomy.DataAccess.Models
 
         public Guid EntityTypeGuid { get; set; }
 
-        public string Title { get; set; }
-
-        public string Code { get; set; }
+        public string Name { get; set; }
 
         public Guid? IconGuid { get; set; }
 
         public string IconSvg { get; set; }
-
-        public long? ParentHierarchyId { get; set; }
 
         public string Description { get; set; }
 
@@ -34,10 +30,6 @@ namespace Holism.Taxonomy.DataAccess.Models
         public int? ItemsCount { get; set; }
 
         public string UrlKey { get; set; }
-
-        public int? Level { get; set; }
-
-        public bool? IsLeaf { get; set; }
 
         public dynamic RelatedItems { get; set; }
     }

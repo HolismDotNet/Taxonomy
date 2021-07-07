@@ -1,10 +1,10 @@
 using System;
 
-namespace Holism.Taxonomy.DataAccess.Models
+namespace Holism.Taxonomy.Models
 {
-    public class Category : Holism.EntityFramework.IEntity
+    public class Hierarchy : Holism.Models.IEntity
     {
-        public Category()
+        public Hierarchy()
         {
             RelatedItems = new System.Dynamic.ExpandoObject();
         }
@@ -23,7 +23,7 @@ namespace Holism.Taxonomy.DataAccess.Models
 
         public string IconSvg { get; set; }
 
-        public long? ParentCategoryId { get; set; }
+        public long? ParentHierarchyId { get; set; }
 
         public string Description { get; set; }
 

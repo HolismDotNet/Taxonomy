@@ -1,8 +1,8 @@
 using System;
 
-namespace Holism.Taxonomy.DataAccess.Models
+namespace Holism.Taxonomy.Models
 {
-    public class TagItem : Holism.EntityFramework.IEntity
+    public class TagItem : Holism.Models.IEntity
     {
         public TagItem()
         {
