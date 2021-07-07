@@ -1,12 +1,11 @@
 ﻿using Holism.Azure;
 using Holism.Business;
 using Holism.Entity.Business;
-using Holism.EntityFramework;
+using Holism.DataAccess;
 using Holism.Framework;
-using Holism.Framework.Extensions;
 using Holism.Image;
 using Holism.Taxonomy.DataAccess;
-using Holism.Taxonomy.DataAccess.Models;
+using Holism.Taxonomy.Models;
 using Holism.Validation;
 using System;
 using System.Collections.Generic;
@@ -19,7 +18,7 @@ namespace Holism.Taxonomy.Business
     {
         public const string TagIconsContainerName = "tagicons";
 
-        protected override Repository<Tag> ModelRepository => Repository.Tag;
+        protected override Repository<Tag> WriteRepository => Repository.Tag;
 
         protected override ReadRepository<Tag> ReadRepository => Repository.Tag;
 
@@ -38,7 +37,7 @@ namespace Holism.Taxonomy.Business
             {
                 tag.ItemsCount = new TagItemBusiness().GetCountOfItemsInTag(tag);
             }
-            ModelRepository.BulkUpdate(tags);
+            WriteRepository.BulkUpdate(tags);
         }
 
         public int GetTotalTaggedItemsCount(string entityTypeName)
@@ -79,14 +78,14 @@ namespace Holism.Taxonomy.Business
         {
             var tag = Get(id);
             tag.Name = name;
-            ModelRepository.Update(tag);
+            WriteRepository.Update(tag);
         }
 
         public void ChangeDescription(long id, string description)
         {
             var tag = Get(id);
             tag.Description = description;
-            ModelRepository.Update(tag);
+            WriteRepository.Update(tag);
         }
 
         public string ChangeIcon(long tagId, byte[] bytes)
@@ -99,7 +98,7 @@ namespace Holism.Taxonomy.Business
             var thumbnail = ImageHelper.MakeImageThumbnail(TaxonomyConfig.TagThumbnailWidth, null, bytes);
             tag.IconGuid = Guid.NewGuid();
             Storage.UploadImage(thumbnail.GetBytes(), tag.IconGuid.Value, TagIconsContainerName);
-            ModelRepository.Update(tag);
+            WriteRepository.Update(tag);
             return Storage.GetImageUrl(TagIconsContainerName, tag.IconGuid.Value);
         }
 
@@ -111,7 +110,7 @@ namespace Holism.Taxonomy.Business
                 Storage.DeleteImage(TagIconsContainerName, tag.IconGuid.Value);
             }
             tag.IconGuid = null;
-            ModelRepository.Update(tag);
+            WriteRepository.Update(tag);
         }
 
         public override void Validate(Tag model)

@@ -1,11 +1,9 @@
 ﻿using Holism.Business;
 using Holism.Entity.Business;
-using Holism.EntityFramework;
+using Holism.DataAccess;
 using Holism.Framework;
-using Holism.Framework.Extensions;
 using Holism.Taxonomy.DataAccess;
-using Holism.Taxonomy.DataAccess.Models;
-using Holism.Taxonomy.DataAccess.Models.Views;
+using Holism.Taxonomy.Models;
 using Holism.Validation;
 using System;
 using System.Collections.Generic;
@@ -15,7 +13,7 @@ namespace Holism.Taxonomy.Business
 {
     public class HierarchyItemBusiness : Business<HierarchyItem, HierarchyItem>
     {
-        protected override Repository<HierarchyItem> ModelRepository => RepositoryFactory.HierarchyItem;
+        protected override Repository<HierarchyItem> WriteRepository => RepositoryFactory.HierarchyItem;
 
         protected override ReadRepository<HierarchyItem> ReadRepository => RepositoryFactory.HierarchyItem;
 
@@ -38,7 +36,7 @@ namespace Holism.Taxonomy.Business
 
         public void UpdateOrder(long hierarchyItemId, int newOrder)
         {
-            var hierarchyItem = ModelRepository.Get(hierarchyItemId);
+            var hierarchyItem = WriteRepository.Get(hierarchyItemId);
             hierarchyItem.Order = newOrder;
             Update(hierarchyItem);
         }
@@ -113,15 +111,15 @@ namespace Holism.Taxonomy.Business
         public ListResult<Guid> GetEntityGuids(long hierarchyId, int pageNumber, List<Guid> excludedEntityGuids)
         {
             CheckExcludedEntitiesCount(excludedEntityGuids);
-            var listOptions = ListOptions.Create();
-            listOptions.PageNumber = pageNumber;
-            listOptions.AddFilter<HierarchyItem>(i => i.HierarchyId, hierarchyId.ToString());
-            listOptions.AddSort<HierarchyItem>(i => i.Order, SortDirection.Ascending);
-            listOptions.AddSort<HierarchyItem>(i => i.Id, SortDirection.Ascending);
-            var entityGuids = ModelRepository
+            var listParameters = ListParameters.Create();
+            listParameters.PageNumber = pageNumber;
+            listParameters.AddFilter<HierarchyItem>(i => i.HierarchyId, hierarchyId.ToString());
+            listParameters.AddSort<HierarchyItem>(i => i.Order, SortDirection.Ascending);
+            listParameters.AddSort<HierarchyItem>(i => i.Id, SortDirection.Ascending);
+            var entityGuids = WriteRepository
                 .All
                 .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
-                .ApplyListOptionsAndGetTotalCount(listOptions)
+                .ApplyListParametersAndGetTotalCount(listParameters)
                 .Convert<HierarchyItem, Guid>(i => i.EntityGuid);
             return entityGuids;
         }
@@ -134,13 +132,13 @@ namespace Holism.Taxonomy.Business
             }
         }
 
-        public ListResult<Guid> GetEntityGuids(ListOptions listOptions, List<Guid> excludedEntityGuids)
+        public ListResult<Guid> GetEntityGuids(ListParameters listParameters, List<Guid> excludedEntityGuids)
         {
             CheckExcludedEntitiesCount(excludedEntityGuids);
-            var entityGuids = ModelRepository
+            var entityGuids = WriteRepository
                 .All
                 .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
-                .ApplyListOptionsAndGetTotalCount(listOptions)
+                .ApplyListParametersAndGetTotalCount(listParameters)
                 .Convert<HierarchyItem, Guid>(i => i.EntityGuid);
             return entityGuids;
         }
@@ -150,7 +148,7 @@ namespace Holism.Taxonomy.Business
             var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
             entityGuid.Ensure().IsNotNull().And().AsString().IsNotEmptyGuid();
             hierarchyId.Ensure().IsNumeric().And().IsGreaterThanZero();
-            var hierarchyItem = ModelRepository.All.FirstOrDefault(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
+            var hierarchyItem = WriteRepository.All.FirstOrDefault(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
             if (hierarchyItem.IsNull())
             {
                 hierarchyItem = new HierarchyItem();
@@ -158,11 +156,11 @@ namespace Holism.Taxonomy.Business
                 hierarchyItem.EntityGuid = entityGuid;
                 hierarchyItem.HierarchyId = hierarchyId;
                 hierarchyItem.Order = 1;
-                ModelRepository.Create(hierarchyItem);
+                WriteRepository.Create(hierarchyItem);
             }
             else
             {
-                ModelRepository.Delete(hierarchyItem);
+                WriteRepository.Delete(hierarchyItem);
             }
             new HierarchyBusiness().CountItemsInHierarchy(hierarchyId);
             OnHierarchyToggled?.Invoke(hierarchyItem);
@@ -182,19 +180,19 @@ namespace Holism.Taxonomy.Business
             var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
             var query = $@"
                 delete
-                from {ModelRepository.TableName}
+                from {WriteRepository.TableName}
                 where EntityGuid = '{entityGuid}'
                 ";
-            ModelRepository.Run(query);
+            WriteRepository.Run(query);
         }
 
         public void RemoveOrphanEntities(string entityTypeName, List<Guid> entityGuids)
         {
             var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
-            var orphanHierarchyItems = ModelRepository.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
+            var orphanHierarchyItems = WriteRepository.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
             foreach (var orphanHierarchyItem in orphanHierarchyItems)
             {
-                ModelRepository.Delete(orphanHierarchyItem);
+                WriteRepository.Delete(orphanHierarchyItem);
             }
         }
 

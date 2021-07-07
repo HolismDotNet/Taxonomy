@@ -14,7 +14,7 @@ namespace Holism.Taxonomy.Business
 {
     public class TagItemBusiness : Business<TagItem, TagItem>
     {
-        protected override Repository<TagItem> ModelRepository => RepositoryTagItem;
+        protected override Repository<TagItem> WriteRepository => RepositoryTagItem;
 
         protected override ReadRepository<TagItem> ReadRepository => Repository.TagItem;
 
@@ -37,7 +37,7 @@ namespace Holism.Taxonomy.Business
 
         public void UpdateOrder(long tagItemId, int newOrder)
         {
-            var tagItem = ModelRepository.Get(tagItemId);
+            var tagItem = WriteRepository.Get(tagItemId);
             tagItem.Order = newOrder;
             Update(tagItem);
         }
@@ -92,15 +92,15 @@ namespace Holism.Taxonomy.Business
         public ListResult<Guid> GetEntityGuids(long tagId, int pageNumber, List<Guid> excludedEntityGuids)
         {
             CheckExcludedEntitiesCount(excludedEntityGuids);
-            var listOptions = ListOptions.Create();
-            listOptions.PageNumber = pageNumber;
-            listOptions.AddFilter<TagItem>(i => i.TagId, tagId.ToString());
-            listOptions.AddSort<TagItem>(i => i.Order, SortDirection.Ascending);
-            listOptions.AddSort<TagItem>(i => i.Id, SortDirection.Ascending);
-            var entityGuids = ModelRepository
+            var listParameters = ListParameters.Create();
+            listParameters.PageNumber = pageNumber;
+            listParameters.AddFilter<TagItem>(i => i.TagId, tagId.ToString());
+            listParameters.AddSort<TagItem>(i => i.Order, SortDirection.Ascending);
+            listParameters.AddSort<TagItem>(i => i.Id, SortDirection.Ascending);
+            var entityGuids = WriteRepository
                 .All
                 .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
-                .ApplyListOptionsAndGetTotalCount(listOptions)
+                .ApplyListParametersAndGetTotalCount(listParameters)
                 .Convert<TagItem, Guid>(i => i.EntityGuid);
             return entityGuids;
         }
@@ -113,13 +113,13 @@ namespace Holism.Taxonomy.Business
             }
         }
 
-        public ListResult<Guid> GetEntityGuids(ListOptions listOptions, List<Guid> excludedEntityGuids)
+        public ListResult<Guid> GetEntityGuids(ListParameters listParameters, List<Guid> excludedEntityGuids)
         {
             CheckExcludedEntitiesCount(excludedEntityGuids);
-            var entityGuids = ModelRepository
+            var entityGuids = WriteRepository
                 .All
                 .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
-                .ApplyListOptionsAndGetTotalCount(listOptions)
+                .ApplyListParametersAndGetTotalCount(listParameters)
                 .Convert<TagItem, Guid>(i => i.EntityGuid);
             return entityGuids;
         }
@@ -129,7 +129,7 @@ namespace Holism.Taxonomy.Business
             var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
             entityGuid.Ensure().IsNotNull().And().AsString().IsNotEmptyGuid();
             tagId.Ensure().IsNumeric().And().IsGreaterThanZero();
-            var tagItem = ModelRepository.All.FirstOrDefault(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid && i.TagId == tagId);
+            var tagItem = WriteRepository.All.FirstOrDefault(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid && i.TagId == tagId);
             if (tagItem.IsNull())
             {
                 tagItem = new TagItem();
@@ -137,11 +137,11 @@ namespace Holism.Taxonomy.Business
                 tagItem.EntityGuid = entityGuid;
                 tagItem.TagId = tagId;
                 tagItem.Order = 1;
-                ModelRepository.Create(tagItem);
+                WriteRepository.Create(tagItem);
             }
             else
             {
-                ModelRepository.Delete(tagItem);
+                WriteRepository.Delete(tagItem);
             }
             new TagBusiness().CountItemsInTag(tagId);
             OnTagToggled?.Invoke(tagItem);
@@ -164,10 +164,10 @@ namespace Holism.Taxonomy.Business
         public void RemoveOrphanEntities(string entityTypeName, List<Guid> entityGuids)
         {
             var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
-            var orphanTagItems = ModelRepository.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
+            var orphanTagItems = WriteRepository.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
             foreach (var orphanTagItem in orphanTagItems)
             {
-                ModelRepository.Delete(orphanTagItem);
+                WriteRepository.Delete(orphanTagItem);
             }
         }
 

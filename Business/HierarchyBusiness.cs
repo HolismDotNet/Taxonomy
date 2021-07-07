@@ -1,12 +1,11 @@
 ﻿using Holism.Azure;
 using Holism.Business;
-using Holism.EntityFramework;
+using Holism.DataAccess;
 using Holism.Framework;
-using Holism.Framework.Extensions;
 using Holism.Image;
 using Holism.Validation;
 using Holism.Taxonomy.DataAccess;
-using Holism.Taxonomy.DataAccess.Models;
+using Holism.Taxonomy.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -14,7 +13,6 @@ using System.Linq;
 using System.Text;
 using Holism.Entity.Business;
 using System.Linq.Expressions;
-using Holism.Sql;
 
 namespace Holism.Taxonomy.Business
 {
@@ -22,7 +20,7 @@ namespace Holism.Taxonomy.Business
     {
         public const string HierarchyIconsContainerName = "hierarchyicons";
 
-        protected override Repository<Hierarchy> ModelRepository => Repository.Taxonomy;
+        protected override Repository<Hierarchy> WriteRepository => Repository.Taxonomy;
 
         protected override ReadRepository<Hierarchy> ReadRepository => Repository.Taxonomy;
 
@@ -98,7 +96,7 @@ namespace Holism.Taxonomy.Business
             {
                 hierarchy.ItemsCount = new HierarchyItemBusiness().GetCountOfItemsInHierarchy(hierarchy);
             }
-            ModelRepository.BulkUpdate(hierarchies);
+            WriteRepository.BulkUpdate(hierarchies);
         }
 
         public int GetTotalCategorizedItemsCount(string entityTypeName)
@@ -170,14 +168,14 @@ namespace Holism.Taxonomy.Business
         {
             var hierarchy = Get(id);
             hierarchy.Title = title;
-            ModelRepository.Update(hierarchy);
+            WriteRepository.Update(hierarchy);
         }
 
         public void ChangeDescription(long id, string description)
         {
             var hierarchy = Get(id);
             hierarchy.Description = description;
-            ModelRepository.Update(hierarchy);
+            WriteRepository.Update(hierarchy);
         }
 
         public List<HierarchyNode> CacheAndGetHierarchy(List<Hierarchy> hierarchies, string entityTypeName = null)
@@ -360,7 +358,7 @@ namespace Holism.Taxonomy.Business
             var thumbnail = ImageHelper.MakeImageThumbnail(TaxonomyConfig.HierarchyThumbnailWidth, null, bytes);
             hierarchy.IconGuid = Guid.NewGuid();
             Storage.UploadImage(thumbnail.GetBytes(), hierarchy.IconGuid.Value, HierarchyIconsContainerName);
-            ModelRepository.Update(hierarchy);
+            WriteRepository.Update(hierarchy);
             return Storage.GetImageUrl(HierarchyIconsContainerName, hierarchy.IconGuid.Value);
         }
 
@@ -372,7 +370,7 @@ namespace Holism.Taxonomy.Business
                 Storage.DeleteImage(HierarchyIconsContainerName, hierarchy.IconGuid.Value);
             }
             hierarchy.IconGuid = null;
-            ModelRepository.Update(hierarchy);
+            WriteRepository.Update(hierarchy);
         }
 
         public override void Validate(Hierarchy model)
