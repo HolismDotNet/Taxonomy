@@ -22,19 +22,9 @@ namespace Holism.Taxonomy.Business
     {
         public const string HierarchyIconsContainerName = "hierarchyicons";
 
-        protected override Repository<Hierarchy> ModelRepository => RepositoryFactory.HierarchyFrom(taxonomyDatabaseName);
+        protected override Repository<Hierarchy> ModelRepository => Repository.Taxonomy;
 
-        protected override ViewRepository<Hierarchy> ViewRepository => RepositoryFactory.HierarchyFrom(taxonomyDatabaseName);
-
-        string taxonomyDatabaseName;
-
-        string entityDatabaseName;
-
-        public HierarchyBusiness(string taxonomyDatabaseName = null, string entityDatabaseName = null)
-        {
-            this.taxonomyDatabaseName = taxonomyDatabaseName;
-            this.entityDatabaseName = entityDatabaseName;
-        }
+        protected override ReadRepository<Hierarchy> ReadRepository => Repository.Taxonomy;
 
         public static List<Action<HierarchyNode>> HierarchyNodeAugmenters = new List<Action<HierarchyNode>>();
 
@@ -62,7 +52,7 @@ namespace Holism.Taxonomy.Business
 
         public Hierarchy Create(string entityTypeName, Hierarchy hierarchy)
         {
-            var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
             hierarchy.EntityTypeGuid = entityTypeGuid;
             return Create(hierarchy);
         }
@@ -73,7 +63,7 @@ namespace Holism.Taxonomy.Business
             {
                 CacheHelper.InitiliazeData(hierarchies, () =>
                 {
-                    hierarchies = RepositoryFactory.Hierarchy.All.Where(i => i.Show == true).ToList();
+                    hierarchies = Repository.Hierarchy.All.Where(i => i.Show == true).ToList();
                     return hierarchies;
                 });
                 return hierarchies;
@@ -96,7 +86,7 @@ namespace Holism.Taxonomy.Business
         {
             get
             {
-                var rootHierarchies = Hierarchies.Where(i => i.ParentHierarchyId.IsNull()).ToList();
+                var rootHierarchies = Hierarchies.Where(i => i.ParentId.IsNull()).ToList();
                 return rootHierarchies;
             }
         }
@@ -106,23 +96,23 @@ namespace Holism.Taxonomy.Business
             var hierarchies = GetAll();
             foreach (var hierarchy in hierarchies)
             {
-                hierarchy.ItemsCount = new HierarchyItemBusiness(taxonomyDatabaseName, entityDatabaseName).GetCountOfItemsInHierarchy(hierarchy);
+                hierarchy.ItemsCount = new HierarchyItemBusiness().GetCountOfItemsInHierarchy(hierarchy);
             }
             ModelRepository.BulkUpdate(hierarchies);
         }
 
-        public int GetTotalCategorizedItemsCount(string entityModuleDatabaseName, string entityTypeName)
+        public int GetTotalCategorizedItemsCount(string entityTypeName)
         {
             CountItemsInHierarchies();
             if (entityTypeName.IsSomething())
             {
-                var entityTypeGuid = new EntityTypeBusiness(entityModuleDatabaseName ?? entityDatabaseName).GetGuid(entityTypeName);
-                var count = ViewRepository.All.Where(i => i.EntityTypeGuid == entityTypeGuid).Sum(i => i.ItemsCount) ?? 0;
+                var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
+                var count = ReadRepository.All.Where(i => i.EntityTypeGuid == entityTypeGuid).Sum(i => i.ItemsCount) ?? 0;
                 return count;
             }
             else
             {
-                var count = ViewRepository.All.Sum(i => i.ItemsCount) ?? 0;
+                var count = ReadRepository.All.Sum(i => i.ItemsCount) ?? 0;
                 return count;
             }
         }
@@ -130,7 +120,7 @@ namespace Holism.Taxonomy.Business
         public void CountItemsInHierarchy(long hierarchyId)
         {
             var hierarchy = Get(hierarchyId);
-            hierarchy.ItemsCount = new HierarchyItemBusiness(taxonomyDatabaseName, entityDatabaseName).GetCountOfItemsInHierarchy(hierarchy);
+            hierarchy.ItemsCount = new HierarchyItemBusiness().GetCountOfItemsInHierarchy(hierarchy);
             Update(hierarchy);
         }
 
@@ -145,13 +135,13 @@ namespace Holism.Taxonomy.Business
 
         public static bool HasSubhierarchies(long hierarchyId)
         {
-            var hasSubhierarchies = Hierarchies.Any(i => i.ParentHierarchyId == hierarchyId);
+            var hasSubhierarchies = Hierarchies.Any(i => i.ParentId == hierarchyId);
             return hasSubhierarchies;
         }
 
-        public static List<Hierarchy> GetSubhierarchies(long parentHierarchyId)
+        public static List<Hierarchy> GetSubhierarchies(long parentId)
         {
-            var subhierarchies = Hierarchies.Where(i => i.ParentHierarchyId == parentHierarchyId).ToList();
+            var subhierarchies = Hierarchies.Where(i => i.ParentId == parentId).ToList();
             return subhierarchies;
         }
 
@@ -159,7 +149,7 @@ namespace Holism.Taxonomy.Business
         {
             item.RelatedItems.IconUrl = GetIconUrl(item);
             item.RelatedItems.HasDefaultIcon = !item.IconGuid.HasValue;
-            item.RelatedItems.HasChildren = ViewRepository.All.Any(i => i.ParentHierarchyId == item.Id);
+            item.RelatedItems.HasChildren = ReadRepository.All.Any(i => i.ParentId == item.Id);
             base.ModifyItemBeforeReturning(item);
         }
 
@@ -169,9 +159,9 @@ namespace Holism.Taxonomy.Business
             return iconUrl;
         }
 
-        public List<Hierarchy> GetList(long? parentHierarchyId = null)
+        public List<Hierarchy> GetList(long? parentId = null)
         {
-            var hierarchies = ViewRepository.All.Where(i => i.ParentHierarchyId == parentHierarchyId).ToList();
+            var hierarchies = ReadRepository.All.Where(i => i.ParentId == parentId).ToList();
             ModifyListBeforeReturning(hierarchies);
             return hierarchies;
         }
@@ -222,22 +212,22 @@ namespace Holism.Taxonomy.Business
 
         public List<HierarchyNode> GetRootHierarchies(string entityTypeName = null)
         {
-            var allHierarchies = ViewRepository.All.Where(i => i.ParentHierarchyId == null).ToList();
+            var allHierarchies = ReadRepository.All.Where(i => i.ParentId == null).ToList();
             if (entityTypeName.IsSomething())
             {
-                var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
+                var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
                 allHierarchies = allHierarchies.Where(i => i.EntityTypeGuid == entityTypeGuid).ToList();
             }
             return ConvertToHierarchyNodes(allHierarchies, null);
         }
 
-        public List<HierarchyNode> GetHierarchies(long? parentHierarchyId = null)
+        public List<HierarchyNode> GetHierarchies(long? parentId = null)
         {
-            var allHierarchies = ViewRepository.All.Where(i => i.ParentHierarchyId == parentHierarchyId).ToList();
+            var allHierarchies = ReadRepository.All.Where(i => i.ParentId == parentId).ToList();
             HierarchyNode parentHierarchy = null;
-            if (parentHierarchyId.HasValue)
+            if (parentId.HasValue)
             {
-                parentHierarchy = ConvertToHierarchyNode(GetOrNull(parentHierarchyId.Value), null);
+                parentHierarchy = ConvertToHierarchyNode(GetOrNull(parentId.Value), null);
             }
             return ConvertToHierarchyNodes(allHierarchies, parentHierarchy);
         }
@@ -261,7 +251,7 @@ namespace Holism.Taxonomy.Business
 
         public List<HierarchyNode> GetHierarchy(string entityTypeName = null)
         {
-            var query = ViewRepository.All;
+            var query = ReadRepository.All;
             var allHierarchies = query.ToList();
             return GetHierarchy(entityTypeName, allHierarchies);
         }
@@ -271,10 +261,10 @@ namespace Holism.Taxonomy.Business
             var allHierarchies = hierarchies;
             if (entityTypeName.IsSomething())
             {
-                var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
+                var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
                 allHierarchies = allHierarchies.Where(i => i.EntityTypeGuid == entityTypeGuid).ToList();
             }
-            var rootHierarchies = allHierarchies.Where(i => i.ParentHierarchyId == null).Select(i => ConvertToHierarchyNode(i, null)).ToList();
+            var rootHierarchies = allHierarchies.Where(i => i.ParentId == null).Select(i => ConvertToHierarchyNode(i, null)).ToList();
             foreach (var rootHierarchy in rootHierarchies)
             {
                 foreach (var augmenter in HierarchyNodeAugmenters)
@@ -300,7 +290,7 @@ namespace Holism.Taxonomy.Business
             hierarchyNode.IconUrl = GetIconUrl(hierarchy);
             hierarchyNode.IconSvg = hierarchy.IconSvg;
             hierarchyNode.HasDefaultIcon = !hierarchy.IconGuid.HasValue;
-            hierarchyNode.ParentHierarchyId = parentHierarchy?.Id;
+            hierarchyNode.ParentId = parentHierarchy?.Id;
             hierarchyNode.ItemsCount = hierarchy.ItemsCount;
             hierarchyNode.UrlKey = hierarchy.UrlKey;
             hierarchyNode.Level = parentHierarchy.IsNull() ? 1 : (parentHierarchy.Level + 1);
@@ -310,7 +300,7 @@ namespace Holism.Taxonomy.Business
 
         private List<HierarchyNode> GetChildrenHierarchies(List<Hierarchy> allHierarchies, HierarchyNode parentHierarchy)
         {
-            var childrenHierarchies = allHierarchies.Where(i => i.ParentHierarchyId == parentHierarchy.Id).Select(i => ConvertToHierarchyNode(i, parentHierarchy)).ToList();
+            var childrenHierarchies = allHierarchies.Where(i => i.ParentId == parentHierarchy.Id).Select(i => ConvertToHierarchyNode(i, parentHierarchy)).ToList();
             foreach (var childHierarchy in childrenHierarchies)
             {
                 foreach (var augmenter in HierarchyNodeAugmenters)
@@ -328,12 +318,12 @@ namespace Holism.Taxonomy.Business
             {
                 return simpleHierarchiesHierarchy;
             }
-            var allHierarchies = ViewRepository.All.ToList();
-            var rootHierarchies = allHierarchies.Where(i => i.ParentHierarchyId == null).Select(i => new SimpleHierarchyNode
+            var allHierarchies = ReadRepository.All.ToList();
+            var rootHierarchies = allHierarchies.Where(i => i.ParentId == null).Select(i => new SimpleHierarchyNode
             {
                 Id = i.Id,
                 Title = i.Title,
-                ParentHierarchyId = null,
+                ParentId = null,
                 Children = new List<SimpleHierarchyNode>()
             }).ToList();
             foreach (var rootHierarchy in rootHierarchies)
@@ -346,11 +336,11 @@ namespace Holism.Taxonomy.Business
 
         private List<SimpleHierarchyNode> GetSimpleChildrenHierarchies(List<Hierarchy> allHierarchies, SimpleHierarchyNode parentHierarchy)
         {
-            var childrenHierarchies = allHierarchies.Where(i => i.ParentHierarchyId == parentHierarchy.Id).Select(i => new SimpleHierarchyNode
+            var childrenHierarchies = allHierarchies.Where(i => i.ParentId == parentHierarchy.Id).Select(i => new SimpleHierarchyNode
             {
                 Id = i.Id,
                 Title = i.Title,
-                ParentHierarchyId = parentHierarchy.Id,
+                ParentId = parentHierarchy.Id,
                 Children = new List<SimpleHierarchyNode>()
             }).ToList(); ;
             foreach (var childHierarchy in childrenHierarchies)
@@ -388,9 +378,9 @@ namespace Holism.Taxonomy.Business
         public override void Validate(Hierarchy model)
         {
             model.Title.Ensure().AsString().IsSomething("عنوان دسته بندی فراهم نشده است");
-            if (model.ParentHierarchyId.HasValue)
+            if (model.ParentId.HasValue)
             {
-                var parentHierarchy = Get(model.ParentHierarchyId.Value);
+                var parentHierarchy = Get(model.ParentId.Value);
                 if (parentHierarchy.IsNull())
                 {
                     throw new BusinessException("دسته بندی والد وجود ندارد");
@@ -410,12 +400,12 @@ namespace Holism.Taxonomy.Business
             return GetByTitle(title, null);
         }
 
-        public Hierarchy GetByTitle(string title, long? parentHierarchyId = null)
+        public Hierarchy GetByTitle(string title, long? parentId = null)
         {
             var hierarchies = GetList(i => i.Title == title);
-            if (parentHierarchyId.HasValue)
+            if (parentId.HasValue)
             {
-                hierarchies = hierarchies.Where(i => i.ParentHierarchyId == parentHierarchyId.Value).ToList();
+                hierarchies = hierarchies.Where(i => i.ParentId == parentId.Value).ToList();
             }
             if (hierarchies.Count > 1)
             {
@@ -449,7 +439,7 @@ namespace Holism.Taxonomy.Business
             var hierarchies = GetAll();
             foreach (var hierarchy in hierarchies)
             {
-                hierarchy.IsLeaf = GetList(i => i.ParentHierarchyId == hierarchy.Id).Count == 0;
+                hierarchy.IsLeaf = GetList(i => i.ParentId == hierarchy.Id).Count == 0;
                 Update(hierarchy);
             }
         }
@@ -464,7 +454,7 @@ namespace Holism.Taxonomy.Business
         public List<Hierarchy> GetHierarchiesInOrder(List<Guid> guids)
         {
             var hierarchies = GetList(guids);
-            var rootHierarchies = hierarchies.Where(i => i.ParentHierarchyId == null || !hierarchies.Any(x => i.ParentHierarchyId == x.Id)).ToList();
+            var rootHierarchies = hierarchies.Where(i => i.ParentId == null || !hierarchies.Any(x => i.ParentId == x.Id)).ToList();
             var orderedIds = new List<long>();
             orderedIds.AddRange(rootHierarchies.Select(i => i.Id).OrderBy(i => i).ToList());
             foreach (var rootHierarchy in rootHierarchies)
@@ -477,7 +467,7 @@ namespace Holism.Taxonomy.Business
 
         private void AddChildHierarchies(Hierarchy rootHierarchy, List<Hierarchy> hierarchies, List<long> orderedIds)
         {
-            var childHierarchies = hierarchies.Where(i => i.ParentHierarchyId == rootHierarchy.Id).OrderBy(i => i.Id).ToList();
+            var childHierarchies = hierarchies.Where(i => i.ParentId == rootHierarchy.Id).OrderBy(i => i.Id).ToList();
             orderedIds.AddRange(childHierarchies.Select(i => i.Id).OrderBy(i => i).ToList());
             foreach (var childHierarchy in childHierarchies)
             {

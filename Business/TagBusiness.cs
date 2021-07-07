@@ -19,23 +19,13 @@ namespace Holism.Taxonomy.Business
     {
         public const string TagIconsContainerName = "tagicons";
 
-        protected override Repository<Tag> ModelRepository => RepositoryFactory.TagFrom(taxonomyDatabaseName);
+        protected override Repository<Tag> ModelRepository => Repository.Tag;
 
-        protected override ViewRepository<Tag> ViewRepository => RepositoryFactory.TagFrom(taxonomyDatabaseName);
-
-        string taxonomyDatabaseName;
-
-        string entityDatabaseName;
-
-        public TagBusiness(string taxonomyDatabaseName = null, string entityDatabaseName = null)
-        {
-            this.taxonomyDatabaseName = taxonomyDatabaseName;
-            this.entityDatabaseName = entityDatabaseName;
-        }
+        protected override ReadRepository<Tag> ReadRepository => Repository.Tag;
 
         public Tag Create(string entityTypeName, Tag tag)
         {
-            var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
             tag.EntityTypeGuid = entityTypeGuid;
             tag.Guid = Guid.NewGuid();
             return Create(tag);
@@ -46,23 +36,23 @@ namespace Holism.Taxonomy.Business
             var tags = GetAll();
             foreach (var tag in tags)
             {
-                tag.ItemsCount = new TagItemBusiness(taxonomyDatabaseName, entityDatabaseName).GetCountOfItemsInTag(tag);
+                tag.ItemsCount = new TagItemBusiness().GetCountOfItemsInTag(tag);
             }
             ModelRepository.BulkUpdate(tags);
         }
 
         public int GetTotalTaggedItemsCount(string entityTypeName)
         {
-            var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
             CountItemsInTags();
-            var count = ViewRepository.All.Where(i => i.EntityTypeGuid == entityTypeGuid).Sum(i => i.ItemsCount) ?? 0;
+            var count = ReadRepository.All.Where(i => i.EntityTypeGuid == entityTypeGuid).Sum(i => i.ItemsCount) ?? 0;
             return count;
         }
 
         public void CountItemsInTag(long tagId)
         {
             var tag = Get(tagId);
-            tag.ItemsCount = new TagItemBusiness(taxonomyDatabaseName, entityDatabaseName).GetCountOfItemsInTag(tag);
+            tag.ItemsCount = new TagItemBusiness().GetCountOfItemsInTag(tag);
             Update(tag);
         }
 

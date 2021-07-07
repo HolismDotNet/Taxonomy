@@ -1,11 +1,9 @@
 ﻿using Holism.Business;
 using Holism.Entity.Business;
-using Holism.EntityFramework;
+using Holism.DataAccess;
 using Holism.Framework;
-using Holism.Framework.Extensions;
 using Holism.Taxonomy.DataAccess;
-using Holism.Taxonomy.DataAccess.Models;
-using Holism.Taxonomy.DataAccess.Models.Views;
+using Holism.Taxonomy.Models;
 using Holism.Validation;
 using System;
 using System.Collections.Generic;
@@ -14,21 +12,11 @@ using System.Text;
 
 namespace Holism.Taxonomy.Business
 {
-    public class TagItemBusiness : Business<TagItemView, TagItem>
+    public class TagItemBusiness : Business<TagItem, TagItem>
     {
-        protected override Repository<TagItem> ModelRepository => RepositoryFactory.TagItemFrom(taxonomyDatabaseName);
+        protected override Repository<TagItem> ModelRepository => RepositoryTagItem;
 
-        protected override ViewRepository<TagItemView> ViewRepository => RepositoryFactory.TagItemViewFrom(taxonomyDatabaseName);
-
-        string taxonomyDatabaseName;
-
-        string entityDatabaseName;
-
-        public TagItemBusiness(string taxonomyDatabaseName = null, string entityDatabaseName = null)
-        {
-            this.taxonomyDatabaseName = taxonomyDatabaseName;
-            this.entityDatabaseName = entityDatabaseName;
-        }
+        protected override ReadRepository<TagItem> ReadRepository => Repository.TagItem;
 
         private static Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>> entitiesInfoAugmenter = new Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>>();
 
@@ -36,7 +24,7 @@ namespace Holism.Taxonomy.Business
 
         public void RegisterEntityInfoAugmenter(string entityTypeName, Func<List<Guid>, Dictionary<Guid, object>> augmenter)
         {
-            var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
             if (entitiesInfoAugmenter.ContainsKey(entityTypeGuid))
             {
                 entitiesInfoAugmenter[entityTypeGuid] = augmenter;
@@ -56,9 +44,9 @@ namespace Holism.Taxonomy.Business
 
         //public List<TagItem> GetItemTags(string entityTypeName, long entityGuid)
         //{
-        //    var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
-        //    var tagIds = ViewRepository.All.Where(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid).Select(i => i.TagId).ToList();
-        //    var tags = new TagBusiness(taxonomyDatabaseName, entityDatabaseName).GetHierarchy(entityTypeName);
+        //    var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
+        //    var tagIds = ReadRepository.All.Where(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid).Select(i => i.TagId).ToList();
+        //    var tags = new TagBusiness().GetHierarchy(entityTypeName);
         //    var tagItems = new List<TagItem>();
         //    foreach (var tag in tags)
         //    {
@@ -80,14 +68,14 @@ namespace Holism.Taxonomy.Business
 
         public int GetCountOfItemsInTag(Tag tag)
         {
-            var count = ViewRepository.All.Count(i => i.EntityTypeGuid == tag.EntityTypeGuid && i.TagId == tag.Id);
+            var count = ReadRepository.All.Count(i => i.EntityTypeGuid == tag.EntityTypeGuid && i.TagId == tag.Id);
             return count;
         }
 
-        public List<TagItemView> GetAllItems(long tagId)
+        public List<TagItem> GetAllItems(long tagId)
         {
-            var tag = new TagBusiness(taxonomyDatabaseName, entityDatabaseName).Get(tagId);
-            var allItems = ViewRepository.All.Where(i => i.TagId == tagId).OrderBy(i => i.Order).ThenBy(i => i.Id).ToList();
+            var tag = new TagBusiness().Get(tagId);
+            var allItems = ReadRepository.All.Where(i => i.TagId == tagId).OrderBy(i => i.Order).ThenBy(i => i.Id).ToList();
             if (entitiesInfoAugmenter.ContainsKey(tag.EntityTypeGuid))
             {
                 var entityGuids = allItems.Select(i => i.EntityGuid).ToList();
@@ -95,7 +83,7 @@ namespace Holism.Taxonomy.Business
                 var tagItemsWithEntityInfo = allItems.Where(i => entityInfoList.ContainsKey(i.EntityGuid)).ToList();
                 foreach (var tagItem in tagItemsWithEntityInfo)
                 {
-                    ExpandoObjectExtensions.AddProperty(tagItem.RelatedItems, new EntityTypeBusiness(entityDatabaseName).GetName(tag.EntityTypeGuid), entityInfoList[tagItem.EntityGuid]);
+                    ExpandoObjectExtensions.AddProperty(tagItem.RelatedItems, new EntityTypeBusiness().GetName(tag.EntityTypeGuid), entityInfoList[tagItem.EntityGuid]);
                 }
             }
             return allItems;
@@ -138,7 +126,7 @@ namespace Holism.Taxonomy.Business
 
         public void ToggleTag(string entityTypeName, long tagId, Guid entityGuid)
         {
-            var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
             entityGuid.Ensure().IsNotNull().And().AsString().IsNotEmptyGuid();
             tagId.Ensure().IsNumeric().And().IsGreaterThanZero();
             var tagItem = ModelRepository.All.FirstOrDefault(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid && i.TagId == tagId);
@@ -155,7 +143,7 @@ namespace Holism.Taxonomy.Business
             {
                 ModelRepository.Delete(tagItem);
             }
-            new TagBusiness(taxonomyDatabaseName, entityDatabaseName).CountItemsInTag(tagId);
+            new TagBusiness().CountItemsInTag(tagId);
             OnTagToggled?.Invoke(tagItem);
         }
 
@@ -170,12 +158,12 @@ namespace Holism.Taxonomy.Business
 
         public void RemoveEntity(string entityTypeName, Guid entityGuid)
         {
-            var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
         }
 
         public void RemoveOrphanEntities(string entityTypeName, List<Guid> entityGuids)
         {
-            var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
             var orphanTagItems = ModelRepository.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
             foreach (var orphanTagItem in orphanTagItems)
             {
@@ -185,8 +173,8 @@ namespace Holism.Taxonomy.Business
 
         public bool IsInTag(string entityTypeName, Guid entityGuid, long tagId)
         {
-            var entityTypeGuid = new EntityTypeBusiness(entityDatabaseName).GetGuid(entityTypeName);
-            var tagItem = ViewRepository.All.Any(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid && i.TagId == tagId);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
+            var tagItem = ReadRepository.All.Any(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid && i.TagId == tagId);
             return tagItem;
         }
     }

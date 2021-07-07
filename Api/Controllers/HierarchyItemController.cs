@@ -11,18 +11,18 @@ namespace Holism.Taxonomy.AdminApi.Controllers
 {
     public class HierarchyItemController : Controller<HierarchyItemView, HierarchyItem>
     {
-        public override Business<HierarchyItemView, HierarchyItem> Business => new HierarchyItemBusiness(taxonomyDatabaseName, entityDatabaseName);
+        public override Business<HierarchyItemView, HierarchyItem> Business => new HierarchyItemBusiness();
 
-        public override ViewBusiness<HierarchyItemView> ViewBusiness => new HierarchyItemBusiness(taxonomyDatabaseName, entityDatabaseName);
+        public override ViewBusiness<HierarchyItemView> ViewBusiness => new HierarchyItemBusiness();
 
-        string taxonomyDatabaseName;
+        string ;
 
-        string entityDatabaseName;
+        string ;
 
-        public HierarchyItemController(string taxonomyDatabaseName = null, string entityDatabaseName = null)
+        public HierarchyItemController(string  = null, string  = null)
         {
-            this.taxonomyDatabaseName = taxonomyDatabaseName;
-            this.entityDatabaseName = entityDatabaseName;
+            this. = ;
+            this. = ;
         }
 
         [HttpGet]
