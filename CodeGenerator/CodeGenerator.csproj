@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup Label="Globals">
+    <SccProjectName>SAK</SccProjectName>
+    <SccProvider>SAK</SccProvider>
+    <SccAuxPath>SAK</SccAuxPath>
+    <SccLocalPath>SAK</SccLocalPath>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <AssemblyName>Holism.Taxonomy.CodeGenerator</AssemblyName>
+    <RootNamespace>Holism.Taxonomy.CodeGenerator</RootNamespace>
+  </PropertyGroup>
+
+  <Import Project="$(HolismProjectsRoot)\Quality\ProjectCodeGenerator.targets" />
+
+</Project>

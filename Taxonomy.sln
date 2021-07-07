@@ -1,0 +1,88 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31019.35
+MinimumVisualStudioVersion = 16.0.31019.35
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CodeGenerator", "CodeGenerator\CodeGenerator.csproj", "{BA009BFA-D18C-4482-8DE0-AC7E4DE1477B}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DataAccess", "DataAccess\DataAccess.csproj", "{2ED34C4B-DD30-4B99-B52F-8B8FE7B3014D}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Business", "Business\Business.csproj", "{3E10B4E8-A59B-4E6C-987A-B8639CA20919}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UserApi", "UserApi\UserApi.csproj", "{D03142A5-1551-4FCC-9545-CB2446B1ECBC}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AdminApi", "AdminApi\AdminApi.csproj", "{BDC6B5F4-8B00-4D30-9F27-D0F940386BBE}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests", "Tests\Tests.csproj", "{786D5C2C-35E6-4C35-8DCF-555E06CB841A}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PublicApi", "PublicApi\PublicApi.csproj", "{890DFC30-394C-4EAE-B00A-D38D345DCCA6}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{BA009BFA-D18C-4482-8DE0-AC7E4DE1477B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BA009BFA-D18C-4482-8DE0-AC7E4DE1477B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BA009BFA-D18C-4482-8DE0-AC7E4DE1477B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BA009BFA-D18C-4482-8DE0-AC7E4DE1477B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2ED34C4B-DD30-4B99-B52F-8B8FE7B3014D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2ED34C4B-DD30-4B99-B52F-8B8FE7B3014D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2ED34C4B-DD30-4B99-B52F-8B8FE7B3014D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2ED34C4B-DD30-4B99-B52F-8B8FE7B3014D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E10B4E8-A59B-4E6C-987A-B8639CA20919}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E10B4E8-A59B-4E6C-987A-B8639CA20919}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E10B4E8-A59B-4E6C-987A-B8639CA20919}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E10B4E8-A59B-4E6C-987A-B8639CA20919}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D03142A5-1551-4FCC-9545-CB2446B1ECBC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D03142A5-1551-4FCC-9545-CB2446B1ECBC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D03142A5-1551-4FCC-9545-CB2446B1ECBC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D03142A5-1551-4FCC-9545-CB2446B1ECBC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BDC6B5F4-8B00-4D30-9F27-D0F940386BBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BDC6B5F4-8B00-4D30-9F27-D0F940386BBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BDC6B5F4-8B00-4D30-9F27-D0F940386BBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BDC6B5F4-8B00-4D30-9F27-D0F940386BBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{786D5C2C-35E6-4C35-8DCF-555E06CB841A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{786D5C2C-35E6-4C35-8DCF-555E06CB841A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{786D5C2C-35E6-4C35-8DCF-555E06CB841A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{786D5C2C-35E6-4C35-8DCF-555E06CB841A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{890DFC30-394C-4EAE-B00A-D38D345DCCA6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{890DFC30-394C-4EAE-B00A-D38D345DCCA6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{890DFC30-394C-4EAE-B00A-D38D345DCCA6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{890DFC30-394C-4EAE-B00A-D38D345DCCA6}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {47C069DF-A786-4EDC-8738-DC0D69DD3D01}
+	EndGlobalSection
+	GlobalSection(TeamFoundationVersionControl) = preSolution
+		SccNumberOfProjects = 8
+		SccEnterpriseProvider = {4CA58AB2-18FA-4F8D-95D4-32DDF27D184C}
+		SccTeamFoundationServer = https://vcs.devcircle.ir/Holism
+		SccLocalPath0 = .
+		SccProjectUniqueName1 = CodeGenerator\\CodeGenerator.csproj
+		SccProjectName1 = CodeGenerator
+		SccLocalPath1 = CodeGenerator
+		SccProjectUniqueName2 = DataAccess\\DataAccess.csproj
+		SccProjectName2 = DataAccess
+		SccLocalPath2 = DataAccess
+		SccProjectUniqueName3 = Business\\Business.csproj
+		SccProjectName3 = Business
+		SccLocalPath3 = Business
+		SccProjectUniqueName4 = UserApi\\UserApi.csproj
+		SccProjectName4 = UserApi
+		SccLocalPath4 = UserApi
+		SccProjectUniqueName5 = AdminApi\\AdminApi.csproj
+		SccProjectName5 = AdminApi
+		SccLocalPath5 = AdminApi
+		SccProjectUniqueName6 = Tests\\Tests.csproj
+		SccProjectName6 = Tests
+		SccLocalPath6 = Tests
+		SccProjectUniqueName7 = PublicApi\\PublicApi.csproj
+		SccProjectName7 = PublicApi
+		SccLocalPath7 = PublicApi
+	EndGlobalSection
+EndGlobal
