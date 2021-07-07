@@ -36,18 +36,6 @@ namespace Holism.Taxonomy.Business
 
         private static Dictionary<string, Hierarchy> hierarchiesTitleDictionary;
 
-        public Hierarchy Get(Guid guid)
-        {
-            var hierarchy = GetOrNull(i => i.Guid == guid);
-            return hierarchy;
-        }
-
-        public List<Hierarchy> GetList(List<Guid> guids)
-        {
-            var hierarchies = GetList(i => guids.Contains(i.Guid));
-            return hierarchies;
-        }
-
         public Hierarchy Create(string entityTypeName, Hierarchy hierarchy)
         {
             var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
