@@ -2,43 +2,43 @@ namespace Holism.Taxonomy.DataAccess
 {
     public class RepositoryFactory
     {
-        public static Repositories.CategoryRepository Category
+        public static Repositories.HierarchyRepository Hierarchy
         {
             get
             {
-                return new Repositories.CategoryRepository();
+                return new Repositories.HierarchyRepository();
             }
         }
 
-        public static Repositories.CategoryRepository CategoryFrom(string databaseName = null)
+        public static Repositories.HierarchyRepository HierarchyFrom(string databaseName = null)
         {
-            return new Repositories.CategoryRepository(databaseName);
+            return new Repositories.HierarchyRepository(databaseName);
         }
 
-        public static Repositories.CategoryItemRepository CategoryItem
+        public static Repositories.HierarchyItemRepository HierarchyItem
         {
             get
             {
-                return new Repositories.CategoryItemRepository();
+                return new Repositories.HierarchyItemRepository();
             }
         }
 
-        public static Repositories.CategoryItemRepository CategoryItemFrom(string databaseName = null)
+        public static Repositories.HierarchyItemRepository HierarchyItemFrom(string databaseName = null)
         {
-            return new Repositories.CategoryItemRepository(databaseName);
+            return new Repositories.HierarchyItemRepository(databaseName);
         }
 
-        public static Repositories.Views.CategoryItemViewRepository CategoryItemView
+        public static Repositories.Views.HierarchyItemViewRepository HierarchyItemView
         {
             get
             {
-                return new Repositories.Views.CategoryItemViewRepository();
+                return new Repositories.Views.HierarchyItemViewRepository();
             }
         }
 
-        public static Repositories.Views.CategoryItemViewRepository CategoryItemViewFrom(string databaseName = null)
+        public static Repositories.Views.HierarchyItemViewRepository HierarchyItemViewFrom(string databaseName = null)
         {
-            return new Repositories.Views.CategoryItemViewRepository(databaseName);
+            return new Repositories.Views.HierarchyItemViewRepository(databaseName);
         }
 
         public static Repositories.TagRepository Tag

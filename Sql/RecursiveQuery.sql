@@ -1,19 +1,19 @@
-with CategoriesCte as
+with HierarchiesCte as
 (
 	select
 		*,
 		cast(Title as nvarchar(max)) as Hierarchy,
 		0 as Step
-	from Categories
-	where ParentCategoryId is null
+	from Hierarchies
+	where ParentHierarchyId is null
 	union all
 	select
-		Categories.*,
-		cast(CategoriesCte.Hierarchy + ', ' + Categories.Title as nvarchar(max)) as Hierarchy,
-		CategoriesCte.Step + 1 as Step
-	from Categories
-	inner join CategoriesCte
-	on Categories.ParentCategoryId = CategoriesCte.Id
+		Hierarchies.*,
+		cast(HierarchiesCte.Hierarchy + ', ' + Hierarchies.Title as nvarchar(max)) as Hierarchy,
+		HierarchiesCte.Step + 1 as Step
+	from Hierarchies
+	inner join HierarchiesCte
+	on Hierarchies.ParentHierarchyId = HierarchiesCte.Id
 )
 select *
-from CategoriesCte
+from HierarchiesCte

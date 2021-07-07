@@ -1,1 +1,1 @@
-Create categories breadcrumb
+Create hierarchies breadcrumb

@@ -12,24 +12,24 @@ namespace Holism.Taxonomy.Business
         public object GetDashboardInfo()
         {
             dynamic info = new ExpandoObject();
-            info.CategoriesCount = RepositoryFactory.Category.All.Count();
-            info.CategorizedItemsCount = RepositoryFactory.CategoryItem.All.Select(i => i.EntityGuid).Distinct().Count();
-            info.CategoriesShare = GetCategoriesShare();
+            info.HierarchiesCount = RepositoryFactory.Hierarchy.All.Count();
+            info.CategorizedItemsCount = RepositoryFactory.HierarchyItem.All.Select(i => i.EntityGuid).Distinct().Count();
+            info.HierarchiesShare = GetHierarchiesShare();
             info.TagsCount = RepositoryFactory.Tag.All.Count();
             info.TaggedItemsCount = RepositoryFactory.TagItem.All.Select(i => i.EntityGuid).Distinct().Count();
             return info;
         }
 
-        private object GetCategoriesShare()
+        private object GetHierarchiesShare()
         {
-            var categoryItems = RepositoryFactory.CategoryItem.All.GroupBy(i => i.CategoryId).ToDictionary(i => i.Key, i => i.Count());
-            var totalItems = categoryItems.Sum(i => i.Value);
-            var categories = RepositoryFactory.Category.All.ToDictionary(i => i.Id, i => i.Title);
+            var hierarchyItems = RepositoryFactory.HierarchyItem.All.GroupBy(i => i.HierarchyId).ToDictionary(i => i.Key, i => i.Count());
+            var totalItems = hierarchyItems.Sum(i => i.Value);
+            var hierarchies = RepositoryFactory.Hierarchy.All.ToDictionary(i => i.Id, i => i.Title);
             var result = new List<dynamic>();
-            foreach (var item in categoryItems)
+            foreach (var item in hierarchyItems)
             {
                 dynamic temp = new ExpandoObject();
-                temp.Category = categories[item.Key];
+                temp.Hierarchy = hierarchies[item.Key];
                 temp.ItemsCount = item.Value;
                 temp.Share = Math.Round((Convert.ToDecimal(item.Value) / Convert.ToDecimal(totalItems)) * 100, 2);
                 result.Add(temp);

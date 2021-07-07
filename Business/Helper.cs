@@ -17,13 +17,13 @@ namespace Holism.Taxonomy.Business
 
         public void RemoveEntity(string entityTypeName, Guid entityGuid)
         {
-            new CategoryItemBusiness(taxonomyDatabaseName, entityDatabaseName).RemoveEntity(entityTypeName, entityGuid);
+            new HierarchyItemBusiness(taxonomyDatabaseName, entityDatabaseName).RemoveEntity(entityTypeName, entityGuid);
             new TagItemBusiness(taxonomyDatabaseName, entityDatabaseName).RemoveEntity(entityTypeName, entityGuid);
         }
 
         public void RemoveOrphanEntities(string entityTypeName, List<Guid> entityGuids)
         {
-            new CategoryItemBusiness(taxonomyDatabaseName, entityDatabaseName).RemoveOrphanEntities(entityTypeName, entityGuids);
+            new HierarchyItemBusiness(taxonomyDatabaseName, entityDatabaseName).RemoveOrphanEntities(entityTypeName, entityGuids);
             new TagItemBusiness(taxonomyDatabaseName, entityDatabaseName).RemoveOrphanEntities(entityTypeName, entityGuids);
         }
     }

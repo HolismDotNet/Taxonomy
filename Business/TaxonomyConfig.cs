@@ -8,11 +8,11 @@ namespace Holism.Taxonomy.Business
 {
     public class TaxonomyConfig : Config
     {
-        public static int CategoryThumbnailWidth
+        public static int HierarchyThumbnailWidth
         {
             get
             {
-                var thumbnailWidthKey = "CategoryThumbnailKey";
+                var thumbnailWidthKey = "HierarchyThumbnailKey";
                 if (HasSetting(thumbnailWidthKey) && GetSetting(thumbnailWidthKey).IsNumeric())
                 {
                     return GetSetting(thumbnailWidthKey).ToInt();
