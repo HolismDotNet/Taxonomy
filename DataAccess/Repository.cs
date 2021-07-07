@@ -1,83 +1,40 @@
+using Holism.Taxonomy.Models;
+using Holism.DataAccess;
+
 namespace Holism.Taxonomy.DataAccess
 {
-    public class RepositoryFactory
+    public class Repository
     {
-        public static Repositories.HierarchyRepository Hierarchy
+        public static Repository<Hierarchy> Hierarchy
         {
             get
             {
-                return new Repositories.HierarchyRepository();
+                return new Holism.DataAccess.Repository<Hierarchy>(new TaxonomyContext());
             }
         }
 
-        public static Repositories.HierarchyRepository HierarchyFrom(string databaseName = null)
-        {
-            return new Repositories.HierarchyRepository(databaseName);
-        }
-
-        public static Repositories.HierarchyItemRepository HierarchyItem
+        public static Repository<HierarchyItem> HierarchyItem
         {
             get
             {
-                return new Repositories.HierarchyItemRepository();
+                return new Holism.DataAccess.Repository<HierarchyItem>(new TaxonomyContext());
             }
         }
 
-        public static Repositories.HierarchyItemRepository HierarchyItemFrom(string databaseName = null)
-        {
-            return new Repositories.HierarchyItemRepository(databaseName);
-        }
-
-        public static Repositories.Views.HierarchyItemViewRepository HierarchyItemView
+        public static Repository<Tag> Tag
         {
             get
             {
-                return new Repositories.Views.HierarchyItemViewRepository();
+                return new Holism.DataAccess.Repository<Tag>(new TaxonomyContext());
             }
         }
 
-        public static Repositories.Views.HierarchyItemViewRepository HierarchyItemViewFrom(string databaseName = null)
-        {
-            return new Repositories.Views.HierarchyItemViewRepository(databaseName);
-        }
-
-        public static Repositories.TagRepository Tag
+        public static Repository<TagItem> TagItem
         {
             get
             {
-                return new Repositories.TagRepository();
+                return new Holism.DataAccess.Repository<TagItem>(new TaxonomyContext());
             }
-        }
-
-        public static Repositories.TagRepository TagFrom(string databaseName = null)
-        {
-            return new Repositories.TagRepository(databaseName);
-        }
-
-        public static Repositories.TagItemRepository TagItem
-        {
-            get
-            {
-                return new Repositories.TagItemRepository();
-            }
-        }
-
-        public static Repositories.TagItemRepository TagItemFrom(string databaseName = null)
-        {
-            return new Repositories.TagItemRepository(databaseName);
-        }
-
-        public static Repositories.Views.TagItemViewRepository TagItemView
-        {
-            get
-            {
-                return new Repositories.Views.TagItemViewRepository();
-            }
-        }
-
-        public static Repositories.Views.TagItemViewRepository TagItemViewFrom(string databaseName = null)
-        {
-            return new Repositories.Views.TagItemViewRepository(databaseName);
         }
     }
 }

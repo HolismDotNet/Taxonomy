@@ -1,18 +1,13 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup Label="Globals">
-    <SccProjectName>SAK</SccProjectName>
-    <SccProvider>SAK</SccProvider>
-    <SccAuxPath>SAK</SccAuxPath>
-    <SccLocalPath>SAK</SccLocalPath>
-  </PropertyGroup>
+  <Import Project="/HolismDotNet/Framework/DotNet.targets" />
 
   <PropertyGroup>
     <AssemblyName>Holism.Taxonomy.DataAccess</AssemblyName>
     <RootNamespace>Holism.Taxonomy.DataAccess</RootNamespace>
   </PropertyGroup>
 
-  <Import Project="$(HolismProjectsRoot)\Framework\ProjectDatabase.targets" />
-  <Import Project="$(HolismProjectsRoot)\Framework\ProjectReusable.targets" />
+  <Import Project="/HolismDotNet/Framework/DataAccess.targets" />
+  <Import Project="/HolismDotNet/Framework/Reusable.targets" />
 
 </Project>
