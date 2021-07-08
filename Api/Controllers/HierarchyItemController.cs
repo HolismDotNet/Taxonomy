@@ -1,34 +1,23 @@
 ﻿using Holism.Api.Controllers;
 using Holism.Business;
 using Holism.Taxonomy.Business;
-using Holism.Taxonomy.DataAccess.Models;
-using Holism.Taxonomy.DataAccess.Models.Views;
+using Holism.Taxonomy.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 
-namespace Holism.Taxonomy.AdminApi.Controllers
+namespace Holism.Taxonomy.Api.Controllers
 {
-    public class HierarchyItemController : Controller<HierarchyItemView, HierarchyItem>
+    public class HierarchyItemController : Controller<HierarchyItem, HierarchyItem>
     {
-        public override Business<HierarchyItemView, HierarchyItem> Business => new HierarchyItemBusiness();
+        public override Business<HierarchyItem, HierarchyItem> Business => new HierarchyItemBusiness();
 
-        public override ViewBusiness<HierarchyItemView> ViewBusiness => new HierarchyItemBusiness();
-
-        string ;
-
-        string ;
-
-        public HierarchyItemController(string  = null, string  = null)
-        {
-            this. = ;
-            this. = ;
-        }
+        public override ReadBusiness<HierarchyItem> ReadBusiness => new HierarchyItemBusiness();
 
         [HttpGet]
         public List<HierarchyItemNode> Hierarchies(string entityType, Guid entityGuid)
         {
-            return ((HierarchyItemBusiness)ViewBusiness).GetItemHierarchies(entityType, entityGuid);
+            return ((HierarchyItemBusiness)ReadBusiness).GetItemHierarchies(entityType, entityGuid);
         }
 
         [HttpPost]
@@ -39,9 +28,9 @@ namespace Holism.Taxonomy.AdminApi.Controllers
         }
 
         [HttpGet]
-        public List<HierarchyItemView> AllItems(long hierarchyId)
+        public List<HierarchyItem> AllItems(long hierarchyId)
         {
-            return ((HierarchyItemBusiness)ViewBusiness).GetAllItems(hierarchyId);
+            return ((HierarchyItemBusiness)ReadBusiness).GetAllItems(hierarchyId);
         }
 
         [HttpPost]
