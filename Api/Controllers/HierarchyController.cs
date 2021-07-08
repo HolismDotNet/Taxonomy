@@ -16,11 +16,11 @@ namespace Holism.Taxonomy.Api.Controllers
 
         public override ReadBusiness<Hierarchy> ReadBusiness => new HierarchyBusiness();
 
-        [HttpGet]
-        public List<Hierarchy> List(long? ParentId = null)
-        {
-            return new HierarchyBusiness().GetList(ParentId);
-        }
+        // [HttpGet]
+        // public List<Hierarchy> List(long? ParentId = null)
+        // {
+        //     return new HierarchyBusiness().GetList(ParentId);
+        // }
 
         [HttpGet]
         public object Hierarchy()

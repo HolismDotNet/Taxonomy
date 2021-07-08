@@ -3,8 +3,8 @@
   <Import Project="/HolismDotNet/Framework/DotNet.targets" />
 
   <PropertyGroup>
-    <AssemblyName>Holism.Taxonomy.UserApi</AssemblyName>
-    <RootNamespace>Holism.Taxonomy.UserApi</RootNamespace>
+    <AssemblyName>Holism.Taxonomy.Api</AssemblyName>
+    <RootNamespace>Holism.Taxonomy.Api</RootNamespace>
   </PropertyGroup>
 
   <Import Project="/HolismDotNet/Framework/Api.targets" />
