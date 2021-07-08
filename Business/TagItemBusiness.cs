@@ -14,7 +14,7 @@ namespace Holism.Taxonomy.Business
 {
     public class TagItemBusiness : Business<TagItem, TagItem>
     {
-        protected override Repository<TagItem> WriteRepository => RepositoryTagItem;
+        protected override Repository<TagItem> WriteRepository => Repository.TagItem;
 
         protected override ReadRepository<TagItem> ReadRepository => Repository.TagItem;
 
@@ -22,9 +22,9 @@ namespace Holism.Taxonomy.Business
 
         public static Action<TagItem> OnTagToggled;
 
-        public void RegisterEntityInfoAugmenter(string entityTypeName, Func<List<Guid>, Dictionary<Guid, object>> augmenter)
+        public void RegisterEntityInfoAugmenter(string entityType, Func<List<Guid>, Dictionary<Guid, object>> augmenter)
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
             if (entitiesInfoAugmenter.ContainsKey(entityTypeGuid))
             {
                 entitiesInfoAugmenter[entityTypeGuid] = augmenter;
@@ -42,11 +42,11 @@ namespace Holism.Taxonomy.Business
             Update(tagItem);
         }
 
-        //public List<TagItem> GetItemTags(string entityTypeName, long entityGuid)
+        //public List<TagItem> GetItemTags(string entityType, long entityGuid)
         //{
-        //    var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
-        //    var tagIds = ReadRepository.All.Where(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid).Select(i => i.TagId).ToList();
-        //    var tags = new TagBusiness().GetHierarchy(entityTypeName);
+        //    var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+        //    var tagIds = ReadRepository.All.Where(i => i.EntityGuid == entityGuid).Select(i => i.TagId).ToList();
+        //    var tags = new TagBusiness().GetHierarchy(entityType);
         //    var tagItems = new List<TagItem>();
         //    foreach (var tag in tags)
         //    {
@@ -68,7 +68,7 @@ namespace Holism.Taxonomy.Business
 
         public int GetCountOfItemsInTag(Tag tag)
         {
-            var count = ReadRepository.All.Count(i => i.EntityTypeGuid == tag.EntityTypeGuid && i.TagId == tag.Id);
+            var count = ReadRepository.All.Count(i => i.TagId == tag.Id);
             return count;
         }
 
@@ -109,7 +109,7 @@ namespace Holism.Taxonomy.Business
         {
             if (excludedEntityGuids.Count > 100)
             {
-                throw new BusinessException("Excluding more than 100 items will slow down the system logarithmically. Please solve this problem.");
+                throw new ClientException("Excluding more than 100 items will slow down the system logarithmically. Please solve this problem.");
             }
         }
 
@@ -124,13 +124,13 @@ namespace Holism.Taxonomy.Business
             return entityGuids;
         }
 
-        public void ToggleTag(string entityTypeName, long tagId, Guid entityGuid)
+        public void ToggleTag(string entityType, long tagId, Guid entityGuid)
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
-            entityGuid.Ensure().IsNotNull().And().AsString().IsNotEmptyGuid();
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+            entityGuid.Ensure().IsNotNull().And().IsNotEmptyGuid();
             tagId.Ensure().IsNumeric().And().IsGreaterThanZero();
-            var tagItem = WriteRepository.All.FirstOrDefault(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid && i.TagId == tagId);
-            if (tagItem.IsNull())
+            var tagItem = WriteRepository.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.TagId == tagId);
+            if (tagItem == null)
             {
                 tagItem = new TagItem();
                 tagItem.EntityTypeGuid = entityTypeGuid;
@@ -147,23 +147,23 @@ namespace Holism.Taxonomy.Business
             OnTagToggled?.Invoke(tagItem);
         }
 
-        public void PutInTag(string entityTypeName, long tagId, Guid entityGuid)
+        public void PutInTag(string entityType, long tagId, Guid entityGuid)
         {
-            if (IsInTag(entityTypeName, entityGuid, tagId))
+            if (IsInTag(entityType, entityGuid, tagId))
             {
                 return;
             }
-            ToggleTag(entityTypeName, tagId, entityGuid);
+            ToggleTag(entityType, tagId, entityGuid);
         }
 
-        public void RemoveEntity(string entityTypeName, Guid entityGuid)
+        public void RemoveEntity(string entityType, Guid entityGuid)
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
         }
 
-        public void RemoveOrphanEntities(string entityTypeName, List<Guid> entityGuids)
+        public void RemoveOrphanEntities(string entityType, List<Guid> entityGuids)
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
             var orphanTagItems = WriteRepository.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
             foreach (var orphanTagItem in orphanTagItems)
             {
@@ -171,10 +171,10 @@ namespace Holism.Taxonomy.Business
             }
         }
 
-        public bool IsInTag(string entityTypeName, Guid entityGuid, long tagId)
+        public bool IsInTag(string entityType, Guid entityGuid, long tagId)
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
-            var tagItem = ReadRepository.All.Any(i => i.EntityTypeGuid == entityTypeGuid && i.EntityGuid == entityGuid && i.TagId == tagId);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+            var tagItem = ReadRepository.All.Any(i => i.EntityGuid == entityGuid && i.TagId == tagId);
             return tagItem;
         }
     }

@@ -3,7 +3,6 @@ using Holism.Business;
 using Holism.Entity.Business;
 using Holism.DataAccess;
 using Holism.Framework;
-using Holism.Image;
 using Holism.Taxonomy.DataAccess;
 using Holism.Taxonomy.Models;
 using Holism.Validation;
@@ -22,9 +21,9 @@ namespace Holism.Taxonomy.Business
 
         protected override ReadRepository<Tag> ReadRepository => Repository.Tag;
 
-        public Tag Create(string entityTypeName, Tag tag)
+        public Tag Create(string entityType, Tag tag)
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
             tag.EntityTypeGuid = entityTypeGuid;
             tag.Guid = Guid.NewGuid();
             return Create(tag);
@@ -40,9 +39,9 @@ namespace Holism.Taxonomy.Business
             WriteRepository.BulkUpdate(tags);
         }
 
-        public int GetTotalTaggedItemsCount(string entityTypeName)
+        public int GetTotalTaggedItemsCount(string entityType)
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityTypeName);
+            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
             CountItemsInTags();
             var count = ReadRepository.All.Where(i => i.EntityTypeGuid == entityTypeGuid).Sum(i => i.ItemsCount) ?? 0;
             return count;
@@ -115,8 +114,8 @@ namespace Holism.Taxonomy.Business
 
         public override void Validate(Tag model)
         {
-            model.Name.Ensure().AsString().IsSomething("نام برچسب فراهم نشده است");
-            model.EntityTypeGuid.Ensure().IsNotNull().And().AsString().IsNotEmptyGuid();
+            model.Name.Ensure().IsSomething("نام برچسب فراهم نشده است");
+            model.EntityTypeGuid.Ensure().IsNotNull().And().IsNotEmptyGuid();
         }
 
         protected override void BeforeCreation(Tag model, object extraParameters = null)
@@ -130,7 +129,7 @@ namespace Holism.Taxonomy.Business
             var tags = GetList(i => i.Name == name);
             if (tags.Count > 1)
             {
-                throw new BusinessException($"بیش از یک برچسب با نام {name} یافت شد");
+                throw new ClientException($"بیش از یک برچسب با نام {name} یافت شد");
             }
             return tags.FirstOrDefault();
         }
@@ -140,7 +139,7 @@ namespace Holism.Taxonomy.Business
             var tags = GetList(i => i.Name == name);
             if (tags.Count > 1)
             {
-                throw new BusinessException($"بیش از یک برچسب با نام {name} یافت شد");
+                throw new ClientException($"بیش از یک برچسب با نام {name} یافت شد");
             }
             if (tags.Count == 1)
             {

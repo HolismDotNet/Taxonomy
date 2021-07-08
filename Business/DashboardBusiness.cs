@@ -12,19 +12,19 @@ namespace Holism.Taxonomy.Business
         public object GetDashboardInfo()
         {
             dynamic info = new ExpandoObject();
-            info.HierarchiesCount = RepositoryFactory.Hierarchy.All.Count();
-            info.CategorizedItemsCount = RepositoryFactory.HierarchyItem.All.Select(i => i.EntityGuid).Distinct().Count();
+            info.HierarchiesCount = Repository.Hierarchy.All.Count();
+            info.CategorizedItemsCount = Repository.HierarchyItem.All.Select(i => i.EntityGuid).Distinct().Count();
             info.HierarchiesShare = GetHierarchiesShare();
-            info.TagsCount = RepositoryFactory.Tag.All.Count();
-            info.TaggedItemsCount = RepositoryFactory.TagItem.All.Select(i => i.EntityGuid).Distinct().Count();
+            info.TagsCount = Repository.Tag.All.Count();
+            info.TaggedItemsCount = Repository.TagItem.All.Select(i => i.EntityGuid).Distinct().Count();
             return info;
         }
 
         private object GetHierarchiesShare()
         {
-            var hierarchyItems = RepositoryFactory.HierarchyItem.All.GroupBy(i => i.HierarchyId).ToDictionary(i => i.Key, i => i.Count());
+            var hierarchyItems = Repository.HierarchyItem.All.GroupBy(i => i.HierarchyId).ToDictionary(i => i.Key, i => i.Count());
             var totalItems = hierarchyItems.Sum(i => i.Value);
-            var hierarchies = RepositoryFactory.Hierarchy.All.ToDictionary(i => i.Id, i => i.Title);
+            var hierarchies = Repository.Hierarchy.All.ToDictionary(i => i.Id, i => i.Title);
             var result = new List<dynamic>();
             foreach (var item in hierarchyItems)
             {

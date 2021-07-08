@@ -7,7 +7,7 @@ CREATE TABLE [dbo].[Hierarchies]
 [Code] [nvarchar] (100) NULL,
 [IconGuid] [uniqueidentifier] NULL,
 [IconSvg] [nvarchar] (max) NULL,
-[ParentHierarchyId] [bigint] NULL,
+[ParentId] [bigint] NULL,
 [Description] [nvarchar] (max) NULL,
 [Order] [int] NOT NULL,
 [Show] [bit] NOT NULL,
@@ -19,7 +19,7 @@ CREATE TABLE [dbo].[Hierarchies]
 GO
 ALTER TABLE [dbo].[Hierarchies] ADD CONSTRAINT [PK_Hierarchies] PRIMARY KEY CLUSTERED  ([Id]) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[Hierarchies] ADD CONSTRAINT [IX_Hierarchies_Unique_ParentHierarchyId_And_Title] UNIQUE NONCLUSTERED  ([ParentHierarchyId], [Title]) ON [PRIMARY]
+ALTER TABLE [dbo].[Hierarchies] ADD CONSTRAINT [IX_Hierarchies_Unique_ParentId_And_Title] UNIQUE NONCLUSTERED  ([ParentId], [Title]) ON [PRIMARY]
 GO
 SET ANSI_NULLS ON
 GO
@@ -37,7 +37,7 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE UNIQUE NONCLUSTERED INDEX [IX_Hierarchies_Unique_UrlKey] ON [dbo].[Hierarchies] ([UrlKey]) WHERE ([UrlKey] IS NOT NULL) ON [PRIMARY]
 GO
-ALTER TABLE [dbo].[Hierarchies] ADD CONSTRAINT [FK_Hierarchies_ParentHierarchyId_Hierarchies_Id] FOREIGN KEY ([ParentHierarchyId]) REFERENCES [dbo].[Hierarchies] ([Id])
+ALTER TABLE [dbo].[Hierarchies] ADD CONSTRAINT [FK_Hierarchies_ParentId_Hierarchies_Id] FOREIGN KEY ([ParentId]) REFERENCES [dbo].[Hierarchies] ([Id])
 GO
 SET ANSI_NULLS ON
 GO

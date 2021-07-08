@@ -10,7 +10,7 @@ namespace Holism.Taxonomy.Business
 
         public string Title { get; set; }
 
-        public long? ParentHierarchyId { get; set; }
+        public long? ParentId { get; set; }
 
         public List<SimpleHierarchyNode> Children { get; set; }
     }

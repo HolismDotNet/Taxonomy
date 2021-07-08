@@ -11,9 +11,9 @@ namespace Holism.Taxonomy.Api.Controllers
     public class HierarchyController : DefaultController
     {
         [HttpGet]
-        public List<Hierarchy> List(long? parentHierarchyId = null)
+        public List<Hierarchy> List(long? ParentId = null)
         {
-            return new HierarchyBusiness().GetList(parentHierarchyId);
+            return new HierarchyBusiness().GetList(ParentId);
         }
 
         [HttpGet]
@@ -47,7 +47,7 @@ namespace Holism.Taxonomy.Api.Controllers
             var hierarchyId = HttpContext.Request.Query["hierarchyId"];
             if (hierarchyId.Count == 0)
             {
-                throw new BusinessException("Please provide hierarchyId");
+                throw new ClientException("Please provide hierarchyId");
             }
             var bytes = file.OpenReadStream().GetBytes();
             var iconUrl = ((HierarchyBusiness)Business).ChangeIcon(hierarchyId[0].ToInt(), bytes);

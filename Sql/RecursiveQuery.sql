@@ -5,7 +5,7 @@ with HierarchiesCte as
 		cast(Title as nvarchar(max)) as Hierarchy,
 		0 as Step
 	from Hierarchies
-	where ParentHierarchyId is null
+	where ParentId is null
 	union all
 	select
 		Hierarchies.*,
@@ -13,7 +13,7 @@ with HierarchiesCte as
 		HierarchiesCte.Step + 1 as Step
 	from Hierarchies
 	inner join HierarchiesCte
-	on Hierarchies.ParentHierarchyId = HierarchiesCte.Id
+	on Hierarchies.ParentId = HierarchiesCte.Id
 )
 select *
 from HierarchiesCte

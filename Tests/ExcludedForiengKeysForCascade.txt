@@ -1,1 +1,1 @@
-﻿FK_Hierarchies_ParentHierarchyId_Hierarchies_Id
+﻿FK_Hierarchies_ParentId_Hierarchies_Id

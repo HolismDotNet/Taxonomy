@@ -33,7 +33,7 @@ namespace Holism.Taxonomy.Business
             }
         }
 
-        public long? ParentHierarchyId { get; set; }
+        public long? ParentId { get; set; }
 
         public int? ItemsCount { get; set; }
 

@@ -16,9 +16,9 @@
             repositoryBuilder.Generate();
             repositoryBuilder.SaveRepositories();
 
-            var repositoryFactoryBuilder = new RepositoryFactoryBuilder();
-            repositoryFactoryBuilder.Generate(repositoryBuilder.Tables);
-            repositoryFactoryBuilder.Save();
+            var RepositoryBuilder = new RepositoryBuilder();
+            RepositoryBuilder.Generate(repositoryBuilder.Tables);
+            RepositoryBuilder.Save();
         }
     }
 }

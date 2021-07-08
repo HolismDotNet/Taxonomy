@@ -1,4 +1,4 @@
-﻿IX_Hierarchies_Unique_ParentHierarchyId_And_Title
+﻿IX_Hierarchies_Unique_ParentId_And_Title
 IX_Hierarchies_Unique_UrlKey
 IX_HierarchyItems_Unique_HierarchyId_And_EntityGuid_And_EntityTypeGuid
 IX_Tags_Unique_Name

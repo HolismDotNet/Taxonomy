@@ -2,7 +2,7 @@
 
 namespace Holism.Taxonomy.CodeGenerator
 {
-    public class RepositoryFactoryBuilder : RepositoryFactoryGenerator
+    public class RepositoryBuilder : RepositoryGenerator
     {
         public override string OutputFolder => @"%HolismProjectsRoot%\Taxonomy\DataAccess\";
 
