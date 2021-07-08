@@ -127,13 +127,12 @@ namespace Holism.Taxonomy.Business
         public void ToggleTag(string entityType, long tagId, Guid entityGuid)
         {
             var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-            entityGuid.Ensure().IsNotNull().And().IsNotEmptyGuid();
-            tagId.Ensure().IsNumeric().And().IsGreaterThanZero();
+            entityGuid.Ensure().IsNotEmpty();
+            tagId.Ensure().IsGreaterThanZero();
             var tagItem = WriteRepository.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.TagId == tagId);
             if (tagItem == null)
             {
                 tagItem = new TagItem();
-                tagItem.EntityTypeGuid = entityTypeGuid;
                 tagItem.EntityGuid = entityGuid;
                 tagItem.TagId = tagId;
                 tagItem.Order = 1;

@@ -370,7 +370,7 @@ namespace Holism.Taxonomy.Business
                     throw new ClientException("دسته بندی والد وجود ندارد");
                 }
             }
-            model.EntityTypeGuid.Ensure().IsNotNull().And().IsNotEmptyGuid();
+            model.EntityTypeGuid.Ensure().IsNotEmpty();
         }
 
         protected override void BeforeCreation(Hierarchy model, object extraParameters = null)

@@ -146,13 +146,12 @@ namespace Holism.Taxonomy.Business
         public void ToggleHierarchy(string entityType, long hierarchyId, Guid entityGuid)
         {
             var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-            entityGuid.Ensure().IsNotNull().And().IsNotEmptyGuid();
-            hierarchyId.Ensure().IsNumeric().And().IsGreaterThanZero();
+            entityGuid.Ensure().IsNotEmpty();
+            hierarchyId.Ensure().IsGreaterThanZero();
             var hierarchyItem = WriteRepository.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
             if (hierarchyItem == null)
             {
                 hierarchyItem = new HierarchyItem();
-                hierarchyItem.EntityTypeGuid = entityTypeGuid;
                 hierarchyItem.EntityGuid = entityGuid;
                 hierarchyItem.HierarchyId = hierarchyId;
                 hierarchyItem.Order = 1;

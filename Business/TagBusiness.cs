@@ -10,6 +10,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using Humanizer;
 
 namespace Holism.Taxonomy.Business
 {
@@ -115,7 +116,7 @@ namespace Holism.Taxonomy.Business
         public override void Validate(Tag model)
         {
             model.Name.Ensure().IsSomething("نام برچسب فراهم نشده است");
-            model.EntityTypeGuid.Ensure().IsNotNull().And().IsNotEmptyGuid();
+            model.EntityTypeGuid.Ensure().IsNotEmpty();
         }
 
         protected override void BeforeCreation(Tag model, object extraParameters = null)
@@ -147,7 +148,7 @@ namespace Holism.Taxonomy.Business
             }
             var tag = new Tag();
             tag.Name = name;
-            tag.UrlKey = name.ToLowercaseDashSeparatedWords();
+            tag.UrlKey = name.Kebaberize();
             Create(entityType, tag);
             return tag;
         }
