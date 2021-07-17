@@ -15,7 +15,4 @@
     </Reference>
   </ItemGroup>
   
-  <Import Project="/HolismDotNet/Cloud/Azure.targets" />
-  <Import Project="/HolismDotNet/Entity/Project.targets" />
-  
 </Project>
