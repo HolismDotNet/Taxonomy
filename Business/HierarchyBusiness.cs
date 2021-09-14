@@ -1,7 +1,7 @@
 ﻿using Holism.Azure;
 using Holism.Business;
 using Holism.DataAccess;
-using Holism.Framework;
+using Holism.Infra;
 using Holism.Validation;
 using Holism.Taxonomy.DataAccess;
 using Holism.Taxonomy.Models;

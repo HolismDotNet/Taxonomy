@@ -1,7 +1,7 @@
 ﻿using Holism.Business;
 using Holism.Entity.Business;
 using Holism.DataAccess;
-using Holism.Framework;
+using Holism.Infra;
 using Holism.Taxonomy.DataAccess;
 using Holism.Taxonomy.Models;
 using Holism.Validation;

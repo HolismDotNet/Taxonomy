@@ -1,4 +1,4 @@
-﻿using Holism.Framework;
+﻿using Holism.Infra;
 
 namespace Holism.Taxonomy.CodeGenerator
 {
