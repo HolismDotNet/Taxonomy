@@ -2,7 +2,7 @@ using System;
 
 namespace Holism.Taxonomy.Models
 {
-    public class Hierarchy : Holism.Models.IEntity
+    public class Hierarchy : Holism.Models.IGuidEntity
     {
         public Hierarchy()
         {
@@ -27,9 +27,9 @@ namespace Holism.Taxonomy.Models
 
         public string Description { get; set; }
 
-        public int Order { get; set; }
+        public int? Order { get; set; }
 
-        public bool Show { get; set; }
+        public bool? Show { get; set; }
 
         public int? ItemsCount { get; set; }
 

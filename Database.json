@@ -1,0 +1,161 @@
+{
+    "name": "Taxonomy",
+    "tables": [
+        {
+            "name": "Hierarchies",
+            "hasGuid": true,
+            "columns": [
+                {
+                    "name": "EntityTypeGuid"
+                },
+                {
+                    "name": "Title"
+                },
+                {
+                    "name": "Code",
+                    "isNullable": true
+                },
+                {
+                    "name": "IconGuid",
+                    "isNullable": true
+                },
+                {
+                    "name": "IconSvg",
+                    "isNullable": true
+                },
+                {
+                    "name": "ParentId",
+                    "isNullable": true
+                },
+                {
+                    "name": "Description",
+                    "isNullable": true
+                },
+                {
+                    "name": "Order",
+                    "type": "int",
+                    "isNullable": true
+                },
+                {
+                    "name": "Show",
+                    "type": "boolean",
+                    "isNullable": true
+                },
+                {
+                    "name": "ItemsCount",
+                    "type": "int",
+                    "isNullable": true
+                },
+                {
+                    "name": "UrlKey",
+                    "isNullable": true
+                },
+                {
+                    "name": "Level",
+                    "type": "int",
+                    "isNullable": true
+                },
+                {
+                    "name": "IsLeaf",
+                    "type": "boolean",
+                    "isNullable": true
+                }
+            ]
+        },
+        {
+            "name": "HierarchyItems",
+            "columns": [
+                {
+                    "name": "HierarchyId"
+                },
+                {
+                    "name": "EntityGuid"
+                },
+                {
+                    "name": "Order",
+                    "type": "int",
+                    "isNullable": true
+                }
+            ]
+        },
+        {
+            "name": "Tags",
+            "hasGuid": true,
+            "columns": [
+                {
+                    "name": "EntityTypeGuid"
+                },
+                {
+                    "name": "Name"
+                },
+                {
+                    "name": "Code",
+                    "isNullable": true
+                },
+                {
+                    "name": "IconGuid",
+                    "isNullable": true
+                },
+                {
+                    "name": "IconSvg",
+                    "isNullable": true
+                },
+                {
+                    "name": "Description",
+                    "isNullable": true
+                },
+                {
+                    "name": "Order",
+                    "type": "int",
+                    "isNullable": true
+                },
+                {
+                    "name": "Show",
+                    "type": "boolean",
+                    "isNullable": true
+                },
+                {
+                    "name": "ItemsCount",
+                    "type": "int",
+                    "isNullable": true
+                },
+                {
+                    "name": "UrlKey",
+                    "isNullable": true
+                }
+            ]
+        },
+        {
+            "name": "TagItems",
+            "columns": [
+                {
+                    "name": "TagId"
+                },
+                {
+                    "name": "EntityGuid"
+                },
+                {
+                    "name": "Order",
+                    "type": "int",
+                    "isNullable": true
+                }
+            ]
+        }
+    ],
+    "views": [
+        {
+            "name": "HierarchyItemViews",
+            "query": [
+                "select *",
+                "from HierarchyItems"
+            ]
+        },
+        {
+            "name": "TagItemViews",
+            "query": [
+                "select *",
+                "from TagItems"
+            ]
+        }
+    ]
+}

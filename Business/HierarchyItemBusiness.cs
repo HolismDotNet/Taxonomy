@@ -1,5 +1,5 @@
 ﻿using Holism.Business;
-using Holism.Entity.Business;
+using Holism.Entities.Business;
 using Holism.DataAccess;
 using Holism.Infra;
 using Holism.Taxonomy.DataAccess;

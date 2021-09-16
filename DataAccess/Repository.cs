@@ -9,7 +9,8 @@ namespace Holism.Taxonomy.DataAccess
         {
             get
             {
-                return new Holism.DataAccess.Repository<Hierarchy>(new TaxonomyContext());
+                return new Holism.DataAccess.Repository<Hierarchy
+                >(new TaxonomyContext());
             }
         }
 
@@ -17,7 +18,8 @@ namespace Holism.Taxonomy.DataAccess
         {
             get
             {
-                return new Holism.DataAccess.Repository<HierarchyItem>(new TaxonomyContext());
+                return new Holism.DataAccess.Repository<HierarchyItem
+                >(new TaxonomyContext());
             }
         }
 
@@ -25,7 +27,8 @@ namespace Holism.Taxonomy.DataAccess
         {
             get
             {
-                return new Holism.DataAccess.Repository<Tag>(new TaxonomyContext());
+                return new Holism.DataAccess.Repository<Tag
+                >(new TaxonomyContext());
             }
         }
 
@@ -33,7 +36,8 @@ namespace Holism.Taxonomy.DataAccess
         {
             get
             {
-                return new Holism.DataAccess.Repository<TagItem>(new TaxonomyContext());
+                return new Holism.DataAccess.Repository<TagItem
+                >(new TaxonomyContext());
             }
         }
     }

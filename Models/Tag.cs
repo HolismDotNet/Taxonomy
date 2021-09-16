@@ -2,7 +2,7 @@ using System;
 
 namespace Holism.Taxonomy.Models
 {
-    public class Tag : Holism.Models.IEntity
+    public class Tag : Holism.Models.IGuidEntity
     {
         public Tag()
         {
@@ -17,15 +17,17 @@ namespace Holism.Taxonomy.Models
 
         public string Name { get; set; }
 
+        public string Code { get; set; }
+
         public Guid? IconGuid { get; set; }
 
         public string IconSvg { get; set; }
 
         public string Description { get; set; }
 
-        public int Order { get; set; }
+        public int? Order { get; set; }
 
-        public bool Show { get; set; }
+        public bool? Show { get; set; }
 
         public int? ItemsCount { get; set; }
 

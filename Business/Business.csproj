@@ -8,7 +8,7 @@
   </PropertyGroup>
 
   <Import Project="/HolismDotNet/Infra/Business.targets" />
-  <Import Project="/HolismDotNet/Entity/Project.targets" />
+  <Import Project="/HolismDotNet/Entities/Project.targets" />
   <Import Project="/HolismDotNet/Cloud/Azure.targets" />
   <Import Project="/HolismDotNet/Infra/Reusable.targets" />
 </Project>

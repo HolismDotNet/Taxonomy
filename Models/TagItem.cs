@@ -15,7 +15,7 @@ namespace Holism.Taxonomy.Models
 
         public Guid EntityGuid { get; set; }
 
-        public int Order { get; set; }
+        public int? Order { get; set; }
 
         public dynamic RelatedItems { get; set; }
     }

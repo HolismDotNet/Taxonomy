@@ -10,7 +10,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
-using Holism.Entity.Business;
+using Holism.Entities.Business;
 using System.Linq.Expressions;
 
 namespace Holism.Taxonomy.Business

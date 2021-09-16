@@ -1,7 +1,7 @@
-using Holism.DataAccess;
-using Microsoft.EntityFrameworkCore;
 using System.Collections.Generic;
 using Holism.Taxonomy.Models;
+using Holism.DataAccess;
+using Microsoft.EntityFrameworkCore;
 
 namespace Holism.Taxonomy.DataAccess
 {
@@ -17,9 +17,9 @@ namespace Holism.Taxonomy.DataAccess
 
         public DbSet<TagItem> TagItems { get; set; }
 
-        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        protected override void OnModelCreating(ModelBuilder builder)
         {
-            base.OnModelCreating(modelBuilder);
+            base.OnModelCreating(builder);
         }
     }
 }
