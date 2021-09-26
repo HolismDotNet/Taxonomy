@@ -17,6 +17,10 @@ namespace Holism.Taxonomy.DataAccess
 
         public DbSet<TagItem> TagItems { get; set; }
 
+        public DbSet<HierarchyItemView> HierarchyItemViews { get; set; }
+
+        public DbSet<TagItemView> TagItemViews { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
