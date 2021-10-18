@@ -2,15 +2,15 @@
 
   <ItemGroup>
     <Reference Include="Holism.Taxonomy.Models">
-      <HintPath>$(HolismProjectsRoot)\Taxonomy\Packages\Holism.Taxonomy.Models.dll</HintPath>
+      <HintPath>/HolismDotNet/Taxonomy/Packages/Holism.Taxonomy.Models.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Holism.Taxonomy.DataAccess">
-      <HintPath>$(HolismProjectsRoot)\Taxonomy\Packages\Holism.Taxonomy.DataAccess.dll</HintPath>
+      <HintPath>/HolismDotNet/Taxonomy/Packages/Holism.Taxonomy.DataAccess.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Holism.Taxonomy.Business">
-      <HintPath>$(HolismProjectsRoot)\Taxonomy\Packages\Holism.Taxonomy.Business.dll</HintPath>
+      <HintPath>/HolismDotNet/Taxonomy/Packages/Holism.Taxonomy.Business.dll</HintPath>
       <Private>True</Private>
     </Reference>
   </ItemGroup>
