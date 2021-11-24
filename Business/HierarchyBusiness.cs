@@ -373,7 +373,7 @@ namespace Holism.Taxonomy.Business
             model.EntityTypeGuid.Ensure().IsNotEmpty();
         }
 
-        protected override void BeforeCreation(Hierarchy model, object extraParameters = null)
+        protected override void PreCreation(Hierarchy model, object extraParameters = null)
         {
             model.Guid = Guid.NewGuid();
             model.Show = true;
