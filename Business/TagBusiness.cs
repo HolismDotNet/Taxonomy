@@ -119,9 +119,8 @@ namespace Holism.Taxonomy.Business
             model.EntityTypeGuid.Ensure().IsNotEmpty();
         }
 
-        protected override void PreCreation(Tag model, object extraParameters = null)
+        protected override void PreCreation(Tag model)
         {
-            model.Guid = Guid.NewGuid();
             model.Show = true;
         }
 
