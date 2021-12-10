@@ -4,7 +4,7 @@ public class TagItem : IEntity
 {
     public TagItem()
     {
-        RelatedItems = new System.Dynamic.ExpandoObject();
+        RelatedItems = new ExpandoObject();
     }
 
     public long Id { get; set; }

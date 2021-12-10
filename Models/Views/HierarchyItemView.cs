@@ -4,7 +4,7 @@ public class HierarchyItemView : IEntity
 {
     public HierarchyItemView()
     {
-        RelatedItems = new System.Dynamic.ExpandoObject();
+        RelatedItems = new ExpandoObject();
     }
 
     public long Id { get; set; }
