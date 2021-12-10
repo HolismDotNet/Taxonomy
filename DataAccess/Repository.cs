@@ -41,20 +41,20 @@ namespace Holism.Taxonomy.DataAccess
             }
         }
 
-        public static Repository<TagItemView> TagItemView
-        {
-            get
-            {
-                return new Holism.DataAccess.Repository<TagItemView
-                >(new TaxonomyContext());
-            }
-        }
-
         public static Repository<HierarchyItemView> HierarchyItemView
         {
             get
             {
                 return new Holism.DataAccess.Repository<HierarchyItemView
+                >(new TaxonomyContext());
+            }
+        }
+
+        public static Repository<TagItemView> TagItemView
+        {
+            get
+            {
+                return new Holism.DataAccess.Repository<TagItemView
                 >(new TaxonomyContext());
             }
         }
