@@ -3,33 +3,32 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Holism.Taxonomy.Business
+namespace Holism.Taxonomy.Business;
+
+public class TaxonomyConfig : InfraConfig
 {
-    public class TaxonomyConfig : Config
+    public static int HierarchyThumbnailWidth
     {
-        public static int HierarchyThumbnailWidth
+        get
         {
-            get
+            var thumbnailWidthKey = "HierarchyThumbnailKey";
+            if (HasSetting(thumbnailWidthKey) && GetSetting(thumbnailWidthKey).IsNumeric())
             {
-                var thumbnailWidthKey = "HierarchyThumbnailKey";
-                if (HasSetting(thumbnailWidthKey) && GetSetting(thumbnailWidthKey).IsNumeric())
-                {
-                    return GetSetting(thumbnailWidthKey).ToInt();
-                }
-                return 100;
+                return GetSetting(thumbnailWidthKey).ToInt();
             }
+            return 100;
         }
-        public static int TagThumbnailWidth
+    }
+    public static int TagThumbnailWidth
+    {
+        get
         {
-            get
+            var thumbnailWidthKey = "TagThumbnailWidth";
+            if (HasSetting(thumbnailWidthKey) && GetSetting(thumbnailWidthKey).IsNumeric())
             {
-                var thumbnailWidthKey = "TagThumbnailWidth";
-                if (HasSetting(thumbnailWidthKey) && GetSetting(thumbnailWidthKey).IsNumeric())
-                {
-                    return GetSetting(thumbnailWidthKey).ToInt();
-                }
-                return 100;
+                return GetSetting(thumbnailWidthKey).ToInt();
             }
+            return 100;
         }
     }
 }
