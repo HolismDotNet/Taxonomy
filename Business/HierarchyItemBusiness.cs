@@ -1,212 +1,200 @@
-﻿using Holism.Business;
-using Holism.Entities.Business;
-using Holism.DataAccess;
-using Holism.Infra;
-using Holism.Taxonomy.DataAccess;
-using Holism.Taxonomy.Models;
-using Holism.Validation;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿namespace Taxonomy;
 
-namespace Holism.Taxonomy.Business
+public class HierarchyItemBusiness : Business<HierarchyItem, HierarchyItem>
 {
-    public class HierarchyItemBusiness : Business<HierarchyItem, HierarchyItem>
+    protected override Repository<HierarchyItem> WriteRepository => Repository.HierarchyItem;
+
+    protected override ReadRepository<HierarchyItem> ReadRepository => Repository.HierarchyItem;
+
+    private static Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>> entitiesInfoAugmenter = new Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>>();
+
+    public static Action<HierarchyItem> OnHierarchyToggled;
+
+    public void RegisterEnittyInfoAugmenter(string entityType, Func<List<Guid>, Dictionary<Guid, object>> augmenter)
     {
-        protected override Repository<HierarchyItem> WriteRepository => Repository.HierarchyItem;
-
-        protected override ReadRepository<HierarchyItem> ReadRepository => Repository.HierarchyItem;
-
-        private static Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>> entitiesInfoAugmenter = new Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>>();
-
-        public static Action<HierarchyItem> OnHierarchyToggled;
-
-        public void RegisterEnittyInfoAugmenter(string entityType, Func<List<Guid>, Dictionary<Guid, object>> augmenter)
+        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+        if (entitiesInfoAugmenter.ContainsKey(entityTypeGuid))
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-            if (entitiesInfoAugmenter.ContainsKey(entityTypeGuid))
+            entitiesInfoAugmenter[entityTypeGuid] = augmenter;
+        }
+        else
+        {
+            entitiesInfoAugmenter.Add(entityTypeGuid, augmenter);
+        }
+    }
+
+    public void UpdateOrder(long hierarchyItemId, int newOrder)
+    {
+        var hierarchyItem = WriteRepository.Get(hierarchyItemId);
+        hierarchyItem.Order = newOrder;
+        Update(hierarchyItem);
+    }
+
+    public List<HierarchyItemNode> GetItemHierarchies(string entityType, Guid entityGuid)
+    {
+        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+        var hierarchyIds = ReadRepository.All.Where(i => i.EntityGuid == entityGuid).Select(i => i.HierarchyId).ToList();
+        var hierarchies = new HierarchyBusiness().GetHierarchy(entityType);
+        var hierarchyItems = new List<HierarchyItemNode>();
+        foreach (var hierarchy in hierarchies)
+        {
+            var hierarchyItem = new HierarchyItemNode();
+            hierarchyItem.Children = new List<HierarchyItemNode>();
+            hierarchyItem.IconUrl = hierarchy.IconUrl;
+            hierarchyItem.IconSvg = hierarchy.IconSvg;
+            hierarchyItem.HierarchyId = hierarchy.Id;
+            hierarchyItem.Title = hierarchy.Title;
+            if (hierarchyIds.Contains(hierarchyItem.HierarchyId))
             {
-                entitiesInfoAugmenter[entityTypeGuid] = augmenter;
+                hierarchyItem.IsInThisHierarchy = true;
             }
-            else
+            hierarchyItems.Add(hierarchyItem);
+            GetChildrenHierarchyItems(hierarchyIds, hierarchy, hierarchyItem);
+        }
+        return hierarchyItems;
+    }
+
+    public int GetCountOfItemsInHierarchy(Hierarchy hierarchy)
+    {
+        var count = ReadRepository.All.Count(i => i.HierarchyId == hierarchy.Id);
+        return count;
+    }
+
+    public List<HierarchyItem> GetAllItems(long hierarchyId)
+    {
+        var hierarchy = new HierarchyBusiness().Get(hierarchyId);
+        var allItems = ReadRepository.All.Where(i => i.HierarchyId == hierarchyId).OrderBy(i => i.Order).ThenBy(i => i.Id).ToList();
+        if (entitiesInfoAugmenter.ContainsKey(hierarchy.EntityTypeGuid))
+        {
+            var entityGuids = allItems.Select(i => i.EntityGuid).ToList();
+            var entityInfoList = entitiesInfoAugmenter[hierarchy.EntityTypeGuid](entityGuids);
+            var hierarchyItemsWithEntityInfo = allItems.Where(i => entityInfoList.ContainsKey(i.EntityGuid)).ToList();
+            foreach (var hierarchyItem in hierarchyItemsWithEntityInfo)
             {
-                entitiesInfoAugmenter.Add(entityTypeGuid, augmenter);
-            }
-        }
-
-        public void UpdateOrder(long hierarchyItemId, int newOrder)
-        {
-            var hierarchyItem = WriteRepository.Get(hierarchyItemId);
-            hierarchyItem.Order = newOrder;
-            Update(hierarchyItem);
-        }
-
-        public List<HierarchyItemNode> GetItemHierarchies(string entityType, Guid entityGuid)
-        {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-            var hierarchyIds = ReadRepository.All.Where(i => i.EntityGuid == entityGuid).Select(i => i.HierarchyId).ToList();
-            var hierarchies = new HierarchyBusiness().GetHierarchy(entityType);
-            var hierarchyItems = new List<HierarchyItemNode>();
-            foreach (var hierarchy in hierarchies)
-            {
-                var hierarchyItem = new HierarchyItemNode();
-                hierarchyItem.Children = new List<HierarchyItemNode>();
-                hierarchyItem.IconUrl = hierarchy.IconUrl;
-                hierarchyItem.IconSvg = hierarchy.IconSvg;
-                hierarchyItem.HierarchyId = hierarchy.Id;
-                hierarchyItem.Title = hierarchy.Title;
-                if (hierarchyIds.Contains(hierarchyItem.HierarchyId))
-                {
-                    hierarchyItem.IsInThisHierarchy = true;
-                }
-                hierarchyItems.Add(hierarchyItem);
-                GetChildrenHierarchyItems(hierarchyIds, hierarchy, hierarchyItem);
-            }
-            return hierarchyItems;
-        }
-
-        public int GetCountOfItemsInHierarchy(Hierarchy hierarchy)
-        {
-            var count = ReadRepository.All.Count(i => i.HierarchyId == hierarchy.Id);
-            return count;
-        }
-
-        public List<HierarchyItem> GetAllItems(long hierarchyId)
-        {
-            var hierarchy = new HierarchyBusiness().Get(hierarchyId);
-            var allItems = ReadRepository.All.Where(i => i.HierarchyId == hierarchyId).OrderBy(i => i.Order).ThenBy(i => i.Id).ToList();
-            if (entitiesInfoAugmenter.ContainsKey(hierarchy.EntityTypeGuid))
-            {
-                var entityGuids = allItems.Select(i => i.EntityGuid).ToList();
-                var entityInfoList = entitiesInfoAugmenter[hierarchy.EntityTypeGuid](entityGuids);
-                var hierarchyItemsWithEntityInfo = allItems.Where(i => entityInfoList.ContainsKey(i.EntityGuid)).ToList();
-                foreach (var hierarchyItem in hierarchyItemsWithEntityInfo)
-                {
-                    ExpandoObjectExtensions.AddProperty(hierarchyItem.RelatedItems, new EntityTypeBusiness().GetName(hierarchy.EntityTypeGuid), entityInfoList[hierarchyItem.EntityGuid]);
-                }
-            }
-            return allItems;
-        }
-
-        private void GetChildrenHierarchyItems(List<long> hierarchyIds, HierarchyNode hierarchy, HierarchyItemNode hierarchyItem)
-        {
-            var hierarchyItemNodes = new List<HierarchyItemNode>();
-            foreach (var child in hierarchy.Children)
-            {
-                var childHierarchyItem = new HierarchyItemNode();
-                childHierarchyItem.Children = new List<HierarchyItemNode>();
-                childHierarchyItem.IconUrl = child.IconUrl;
-                childHierarchyItem.IconSvg = hierarchy.IconSvg;
-                childHierarchyItem.HierarchyId = child.Id;
-                childHierarchyItem.Title = child.Title;
-                if (hierarchyIds.Contains(childHierarchyItem.HierarchyId))
-                {
-                    childHierarchyItem.IsInThisHierarchy = true;
-                }
-                hierarchyItem.Children.Add(childHierarchyItem);
-                GetChildrenHierarchyItems(hierarchyIds, child, childHierarchyItem);
+                ExpandoObjectExtensions.AddProperty(hierarchyItem.RelatedItems, new EntityTypeBusiness().GetName(hierarchy.EntityTypeGuid), entityInfoList[hierarchyItem.EntityGuid]);
             }
         }
+        return allItems;
+    }
 
-        public ListResult<Guid> GetEntityGuids(long hierarchyId, int pageNumber, List<Guid> excludedEntityGuids)
+    private void GetChildrenHierarchyItems(List<long> hierarchyIds, HierarchyNode hierarchy, HierarchyItemNode hierarchyItem)
+    {
+        var hierarchyItemNodes = new List<HierarchyItemNode>();
+        foreach (var child in hierarchy.Children)
         {
-            CheckExcludedEntitiesCount(excludedEntityGuids);
-            var listParameters = ListParameters.Create();
-            listParameters.PageNumber = pageNumber;
-            listParameters.AddFilter<HierarchyItem>(i => i.HierarchyId, hierarchyId.ToString());
-            listParameters.AddSort<HierarchyItem>(i => i.Order, SortDirection.Ascending);
-            listParameters.AddSort<HierarchyItem>(i => i.Id, SortDirection.Ascending);
-            var entityGuids = WriteRepository
-                .All
-                .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
-                .ApplyListParametersAndGetTotalCount(listParameters)
-                .Convert<HierarchyItem, Guid>(i => i.EntityGuid);
-            return entityGuids;
-        }
-
-        private void CheckExcludedEntitiesCount(List<Guid> excludedEntityGuids)
-        {
-            if (excludedEntityGuids.Count > 100)
+            var childHierarchyItem = new HierarchyItemNode();
+            childHierarchyItem.Children = new List<HierarchyItemNode>();
+            childHierarchyItem.IconUrl = child.IconUrl;
+            childHierarchyItem.IconSvg = hierarchy.IconSvg;
+            childHierarchyItem.HierarchyId = child.Id;
+            childHierarchyItem.Title = child.Title;
+            if (hierarchyIds.Contains(childHierarchyItem.HierarchyId))
             {
-                throw new ClientException("Excluding more than 100 items will slow down the system logarithmically. Please solve this problem.");
+                childHierarchyItem.IsInThisHierarchy = true;
             }
+            hierarchyItem.Children.Add(childHierarchyItem);
+            GetChildrenHierarchyItems(hierarchyIds, child, childHierarchyItem);
         }
+    }
 
-        public ListResult<Guid> GetEntityGuids(ListParameters listParameters, List<Guid> excludedEntityGuids)
-        {
-            CheckExcludedEntitiesCount(excludedEntityGuids);
-            var entityGuids = WriteRepository
-                .All
-                .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
-                .ApplyListParametersAndGetTotalCount(listParameters)
-                .Convert<HierarchyItem, Guid>(i => i.EntityGuid);
-            return entityGuids;
-        }
+    public ListResult<Guid> GetEntityGuids(long hierarchyId, int pageNumber, List<Guid> excludedEntityGuids)
+    {
+        CheckExcludedEntitiesCount(excludedEntityGuids);
+        var listParameters = ListParameters.Create();
+        listParameters.PageNumber = pageNumber;
+        listParameters.AddFilter<HierarchyItem>(i => i.HierarchyId, hierarchyId.ToString());
+        listParameters.AddSort<HierarchyItem>(i => i.Order, SortDirection.Ascending);
+        listParameters.AddSort<HierarchyItem>(i => i.Id, SortDirection.Ascending);
+        var entityGuids = WriteRepository
+            .All
+            .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
+            .ApplyListParametersAndGetTotalCount(listParameters)
+            .Convert<HierarchyItem, Guid>(i => i.EntityGuid);
+        return entityGuids;
+    }
 
-        public void ToggleHierarchy(string entityType, long hierarchyId, Guid entityGuid)
+    private void CheckExcludedEntitiesCount(List<Guid> excludedEntityGuids)
+    {
+        if (excludedEntityGuids.Count > 100)
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-            entityGuid.Ensure().IsNotEmpty();
-            hierarchyId.Ensure().IsGreaterThanZero();
-            var hierarchyItem = WriteRepository.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
-            if (hierarchyItem == null)
-            {
-                hierarchyItem = new HierarchyItem();
-                hierarchyItem.EntityGuid = entityGuid;
-                hierarchyItem.HierarchyId = hierarchyId;
-                hierarchyItem.Order = 1;
-                WriteRepository.Create(hierarchyItem);
-            }
-            else
-            {
-                WriteRepository.Delete(hierarchyItem);
-            }
-            new HierarchyBusiness().CountItemsInHierarchy(hierarchyId);
-            OnHierarchyToggled?.Invoke(hierarchyItem);
+            throw new ClientException("Excluding more than 100 items will slow down the system logarithmically. Please solve this problem.");
         }
+    }
 
-        public void PutInHierarchy(string entityType, long hierarchyId, Guid entityGuid)
-        {
-            if (IsInHierarchy(entityType, entityGuid, hierarchyId))
-            {
-                return;
-            }
-            ToggleHierarchy(entityType, hierarchyId, entityGuid);
-        }
+    public ListResult<Guid> GetEntityGuids(ListParameters listParameters, List<Guid> excludedEntityGuids)
+    {
+        CheckExcludedEntitiesCount(excludedEntityGuids);
+        var entityGuids = WriteRepository
+            .All
+            .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
+            .ApplyListParametersAndGetTotalCount(listParameters)
+            .Convert<HierarchyItem, Guid>(i => i.EntityGuid);
+        return entityGuids;
+    }
 
-        public void RemoveEntity(string entityType, Guid entityGuid)
+    public void ToggleHierarchy(string entityType, long hierarchyId, Guid entityGuid)
+    {
+        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+        entityGuid.Ensure().IsNotEmpty();
+        hierarchyId.Ensure().IsGreaterThanZero();
+        var hierarchyItem = WriteRepository.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
+        if (hierarchyItem == null)
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-            var query = $@"
-                delete
-                from {WriteRepository.TableName}
-                where EntityGuid = '{entityGuid}'
-                ";
-            WriteRepository.Run(query);
+            hierarchyItem = new HierarchyItem();
+            hierarchyItem.EntityGuid = entityGuid;
+            hierarchyItem.HierarchyId = hierarchyId;
+            hierarchyItem.Order = 1;
+            WriteRepository.Create(hierarchyItem);
         }
+        else
+        {
+            WriteRepository.Delete(hierarchyItem);
+        }
+        new HierarchyBusiness().CountItemsInHierarchy(hierarchyId);
+        OnHierarchyToggled?.Invoke(hierarchyItem);
+    }
 
-        public void RemoveOrphanEntities(string entityType, List<Guid> entityGuids)
+    public void PutInHierarchy(string entityType, long hierarchyId, Guid entityGuid)
+    {
+        if (IsInHierarchy(entityType, entityGuid, hierarchyId))
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-            var orphanHierarchyItems = WriteRepository.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
-            foreach (var orphanHierarchyItem in orphanHierarchyItems)
-            {
-                WriteRepository.Delete(orphanHierarchyItem);
-            }
+            return;
         }
+        ToggleHierarchy(entityType, hierarchyId, entityGuid);
+    }
 
-        public List<long> GetItemHierarchyIds(string entityType, Guid entityGuid)
-        {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-            var hierarchyItems = ReadRepository.All.Where(i => i.EntityGuid == entityGuid).Select(i => i.HierarchyId).Distinct().ToList();
-            return hierarchyItems;
-        }
+    public void RemoveEntity(string entityType, Guid entityGuid)
+    {
+        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+        var query = $@"
+            delete
+            from {WriteRepository.TableName}
+            where EntityGuid = '{entityGuid}'
+            ";
+        WriteRepository.Run(query);
+    }
 
-        public bool IsInHierarchy(string entityType, Guid entityGuid, long hierarchyId)
+    public void RemoveOrphanEntities(string entityType, List<Guid> entityGuids)
+    {
+        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+        var orphanHierarchyItems = WriteRepository.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
+        foreach (var orphanHierarchyItem in orphanHierarchyItems)
         {
-            var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-            var hierarchyItem = ReadRepository.All.Any(i => i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
-            return hierarchyItem;
+            WriteRepository.Delete(orphanHierarchyItem);
         }
+    }
+
+    public List<long> GetItemHierarchyIds(string entityType, Guid entityGuid)
+    {
+        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+        var hierarchyItems = ReadRepository.All.Where(i => i.EntityGuid == entityGuid).Select(i => i.HierarchyId).Distinct().ToList();
+        return hierarchyItems;
+    }
+
+    public bool IsInHierarchy(string entityType, Guid entityGuid, long hierarchyId)
+    {
+        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+        var hierarchyItem = ReadRepository.All.Any(i => i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
+        return hierarchyItem;
     }
 }

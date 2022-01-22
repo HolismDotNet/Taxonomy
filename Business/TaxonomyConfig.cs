@@ -1,9 +1,4 @@
-﻿using Holism.Infra;
-using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Holism.Taxonomy.Business;
+﻿namespace Taxonomy;
 
 public class TaxonomyConfig : InfraConfig
 {
