@@ -1,4 +1,4 @@
-namespace Holism.Taxonomy.Models;
+namespace Taxonomy;
 
 public class HierarchyItem : IEntity
 {

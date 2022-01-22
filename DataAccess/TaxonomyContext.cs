@@ -1,4 +1,4 @@
-namespace Holism.Taxonomy.DataAccess;
+namespace Taxonomy;
 
 public class TaxonomyContext : DatabaseContext
 {
