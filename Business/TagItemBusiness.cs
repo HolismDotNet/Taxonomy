@@ -1,4 +1,4 @@
-﻿namespace Taxonom;
+﻿namespace Taxonomy;
 
 public class TagItemBusiness : Business<TagItem, TagItem>
 {
