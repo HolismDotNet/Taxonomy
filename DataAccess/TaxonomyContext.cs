@@ -4,17 +4,17 @@ public class TaxonomyContext : DatabaseContext
 {
     public override string ConnectionStringName => "Taxonomy";
 
-    public DbSet<Hierarchy> Hierarchies { get; set; }
+    public DbSet<Taxonomy.Hierarchy> Hierarchies { get; set; }
 
-    public DbSet<HierarchyItem> HierarchyItems { get; set; }
+    public DbSet<Taxonomy.HierarchyItem> HierarchyItems { get; set; }
 
-    public DbSet<HierarchyItemView> HierarchyItemViews { get; set; }
+    public DbSet<Taxonomy.HierarchyItemView> HierarchyItemViews { get; set; }
 
-    public DbSet<TagItem> TagItems { get; set; }
+    public DbSet<Taxonomy.TagItem> TagItems { get; set; }
 
-    public DbSet<TagItemView> TagItemViews { get; set; }
+    public DbSet<Taxonomy.TagItemView> TagItemViews { get; set; }
 
-    public DbSet<Tag> Tags { get; set; }
+    public DbSet<Taxonomy.Tag> Tags { get; set; }
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
