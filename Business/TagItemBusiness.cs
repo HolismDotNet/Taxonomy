@@ -1,10 +1,10 @@
 ﻿namespace Taxonomy;
 
-public class TagItemBusiness : Business<TagItem, TagItem>
+public class TagItemBusiness : Business<TagItemView, TagItem>
 {
     protected override Repository<TagItem> WriteRepository => Repository.TagItem;
 
-    protected override ReadRepository<TagItem> ReadRepository => Repository.TagItem;
+    protected override ReadRepository<TagItemView> ReadRepository => Repository.TagItemView;
 
     private static Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>> entitiesInfoAugmenter = new Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>>();
 
@@ -30,29 +30,14 @@ public class TagItemBusiness : Business<TagItem, TagItem>
         Update(tagItem);
     }
 
-    //public List<TagItem> GetItemTags(string entityType, long entityGuid)
-    //{
-    //    var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-    //    var tagIds = ReadRepository.All.Where(i => i.EntityGuid == entityGuid).Select(i => i.TagId).ToList();
-    //    var tags = new TagBusiness().GetHierarchy(entityType);
-    //    var tagItems = new List<TagItem>();
-    //    foreach (var tag in tags)
-    //    {
-    //        var tagItem = new TagItem();
-    //        tagItem.Children = new List<TagItem>();
-    //        tagItem.IconUrl = tag.IconUrl;
-    //        tagItem.IconSvg = tag.IconSvg;
-    //        tagItem.TagId = tag.Id;
-    //        tagItem.Title = tag.Title;
-    //        if (tagIds.Contains(tagItem.TagId))
-    //        {
-    //            tagItem.IsInThisTag = true;
-    //        }
-    //        tagItems.Add(tagItem);
-    //        GetChildrenTagItems(tagIds, tag, tagItem);
-    //    }
-    //    return tagItems;
-    //}
+    public List<TagItemView> GetItemTags(string entityType, Guid entityGuid)
+    {
+       var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+       var tagItems = ReadRepository.All
+        .Where(i => i.EntityGuid == entityGuid)
+        .ToList();
+        return tagItems;
+    }
 
     public int GetCountOfItemsInTag(Tag tag)
     {
@@ -60,7 +45,7 @@ public class TagItemBusiness : Business<TagItem, TagItem>
         return count;
     }
 
-    public List<TagItem> GetAllItems(long tagId)
+    public List<TagItemView> GetAllItems(long tagId)
     {
         var tag = new TagBusiness().Get(tagId);
         var allItems = ReadRepository.All.Where(i => i.TagId == tagId).OrderBy(i => i.Order).ThenBy(i => i.Id).ToList();
