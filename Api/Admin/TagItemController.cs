@@ -6,10 +6,10 @@ public class TagItemController : Controller<TagItemView, TagItem>
 
     public override Business<TagItemView, TagItem> Business => new TagItemBusiness();
 
-    [BindProperty]
+    [BindProperty(SupportsGet = true)]
     public string EntityType { get; set; }
 
-    [BindProperty]
+    [BindProperty(SupportsGet = true)]
     public Guid? EntityGuid { get; set; }
 
     public override Action<ListParameters> ListParametersAugmenter => listParameters => 
