@@ -49,7 +49,7 @@ public class TagBusiness : Business<Tag, Tag>
 
     protected override void ModifyItemBeforeReturning(Tag item)
     {
-        item.RelatedItems.IconUrl = GetIconUrl(item);
+        // item.RelatedItems.IconUrl = GetIconUrl(item);
         item.RelatedItems.HasDefaultIcon = !item.IconGuid.HasValue;
         base.ModifyItemBeforeReturning(item);
     }
@@ -101,7 +101,7 @@ public class TagBusiness : Business<Tag, Tag>
 
     public override void Validate(Tag model)
     {
-        model.Name.Ensure().IsSomething("نام برچسب فراهم نشده است");
+        model.Name.Ensure().IsSomething("Name is not provided");
         model.EntityTypeGuid.Ensure().IsNotEmpty();
     }
 
@@ -115,7 +115,7 @@ public class TagBusiness : Business<Tag, Tag>
         var tags = GetList(i => i.Name == name);
         if (tags.Count > 1)
         {
-            throw new ClientException($"بیش از یک برچسب با نام {name} یافت شد");
+            throw new ClientException($"No tag is found with name {name}");
         }
         return tags.FirstOrDefault();
     }
@@ -125,7 +125,7 @@ public class TagBusiness : Business<Tag, Tag>
         var tags = GetList(i => i.Name == name);
         if (tags.Count > 1)
         {
-            throw new ClientException($"بیش از یک برچسب با نام {name} یافت شد");
+            throw new ClientException($"No tag is found with name {name}");
         }
         if (tags.Count == 1)
         {
