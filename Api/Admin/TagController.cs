@@ -6,7 +6,7 @@ public class TagController : Controller<Tag, Tag>
 
     public override Business<Tag, Tag> Business => new TagBusiness();
 
-    [BindProperty]
+    [BindProperty(SupportsGet = true)]
     public string EntityType { get; set; }
 
     public override Action<ListParameters> ListParametersAugmenter => listParameters => 
