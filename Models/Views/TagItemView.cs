@@ -15,5 +15,9 @@ public class TagItemView : IEntity, IOrder
 
     public long? Order { get; set; }
 
+    public string TagName { get; set; }
+
+    public Guid TagGuid { get; set; }
+
     public dynamic RelatedItems { get; set; }
 }

@@ -99,9 +99,10 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
 
     public void UpsertTags(Guid entityGuid, List<Guid> tagGuids)
     {
+        Database.Open(Repository.Tag.ConnectionString).Run($"delete from TagItems where EntityGuid = '{entityGuid}'");
         foreach (var tagGuid in tagGuids)
         {
-            ToggleTag(entityGuid, tagGuid);
+            PutInTag(entityGuid, tagGuid);
         }
     }
 
@@ -126,13 +127,13 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
         OnTagToggled?.Invoke(tagItem);
     }
 
-    public void PutInTag(Guid tagGuid, Guid entityGuid)
+    public void PutInTag(Guid entityGuid, Guid tagGuid)
     {
         if (IsInTag(entityGuid, tagGuid))
         {
             return;
         }
-        ToggleTag(tagGuid, entityGuid);
+        ToggleTag(entityGuid, tagGuid);
     }
 
     public void RemoveEntity(string entityType, Guid entityGuid)

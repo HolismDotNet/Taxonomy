@@ -192,8 +192,13 @@
         {
             "name": "TagItemViews",
             "query": [
-                "select *",
-                "from TagItems"
+                "select",
+                "  ti.*,",
+                "  t.`Name` as TagName,",
+                "  t.Guid as TagGuid",
+                "from TagItems ti",
+                "inner join Tags t",
+                "on ti.TagId = t.Id"
             ]
         }
     ]
