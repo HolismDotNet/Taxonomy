@@ -16,6 +16,17 @@ public class TagBusiness : Business<Tag, Tag>
         return Create(tag);
     }
 
+    public List<Tag> GetEntityTypeTags(string entityType)
+    {
+        if (entityType.IsNothing())
+        {
+            throw new ClientException("EntityType is not provided");
+        }
+        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+        var tags = GetList(i => i.EntityTypeGuid == entityTypeGuid);
+        return tags;
+    }
+
     public void CountItemsInTags()
     {
         var tags = GetAll();

@@ -9,15 +9,12 @@ public class TagController : Controller<Tag, Tag>
     [BindProperty(SupportsGet = true)]
     public string EntityType { get; set; }
 
-    public override Action<ListParameters> ListParametersAugmenter => listParameters => 
+    [HttpGet]
+    public List<Tag> EntityTypeTags(string entityType)
     {
-        if (EntityType.IsNothing())
-        {
-            throw new ClientException("EntityType is not provided");
-        }
-        var entityTypeGuid = new EntityTypeBusiness().GetGuid(EntityType);
-        listParameters.AddFilter<Tag>(i => i.EntityTypeGuid, entityTypeGuid);
-    };
+        var tags = new TagBusiness().GetEntityTypeTags(entityType);
+        return tags;
+    }
 
     public override Action<Tag, UpsertMode> PreUpsertion => (tag, upsertMode) =>
     {
