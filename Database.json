@@ -47,7 +47,8 @@
                     "isNullable": true
                 },
                 {
-                    "name": "UrlKey",
+                    "name": "Slug",
+                    "isUnique": true,
                     "isNullable": true
                 },
                 {
@@ -59,6 +60,16 @@
                     "name": "IsLeaf",
                     "type": "boolean",
                     "isNullable": true
+                }
+            ],
+            "indexes": [
+                {
+                    "columns": [
+                        "EntityTypeGuid",
+                        "ParentId",
+                        "Title"
+                    ],
+                    "isUnique": true
                 }
             ]
         },
@@ -75,6 +86,15 @@
                     "name": "Order",
                     "type": "int",
                     "isNullable": true
+                }
+            ],
+            "indexes": [
+                {
+                    "columns": [
+                        "HierarchyId",
+                        "EntityGuid"
+                    ],
+                    "isUnique": true
                 }
             ]
         },
@@ -120,8 +140,18 @@
                     "isNullable": true
                 },
                 {
-                    "name": "UrlKey",
+                    "name": "Slug",
+                    "isUnique": true,
                     "isNullable": true
+                }
+            ],
+            "indexes": [
+                {
+                    "columns": [
+                        "EntityTypeGuid",
+                        "Name"
+                    ],
+                    "isUnique": true
                 }
             ]
         },
@@ -138,6 +168,15 @@
                     "name": "Order",
                     "type": "int",
                     "isNullable": true
+                }
+            ],
+            "indexes": [
+                {
+                    "columns": [
+                        "TagId",
+                        "EntityGuid"
+                    ],
+                    "isUnique": true
                 }
             ]
         }

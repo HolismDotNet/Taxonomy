@@ -29,7 +29,7 @@ public class Tag : IGuidEntity
 
     public int? ItemsCount { get; set; }
 
-    public string UrlKey { get; set; }
+    public string Slug { get; set; }
 
     public dynamic RelatedItems { get; set; }
 }
