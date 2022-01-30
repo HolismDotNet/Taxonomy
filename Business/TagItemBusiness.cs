@@ -97,17 +97,24 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
         return entityGuids;
     }
 
-    public void ToggleTag(string entityType, long tagId, Guid entityGuid)
+    public void UpsertTags(Guid entityGuid, List<Guid> tagGuids)
     {
-        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-        entityGuid.Ensure().IsNotEmpty();
-        tagId.Ensure().IsGreaterThanZero();
-        var tagItem = WriteRepository.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.TagId == tagId);
+        foreach (var tagGuid in tagGuids)
+        {
+            ToggleTag(entityGuid, tagGuid);
+        }
+    }
+
+    public void ToggleTag(Guid entityGuid, Guid tagGuid)
+    {
+        tagGuid.Ensure().IsNotEmpty();
+        var tag = new TagBusiness().GetByGuid(tagGuid);
+        var tagItem = WriteRepository.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.TagId == tag.Id);
         if (tagItem == null)
         {
             tagItem = new TagItem();
             tagItem.EntityGuid = entityGuid;
-            tagItem.TagId = tagId;
+            tagItem.TagId = tag.Id;
             tagItem.Order = 1;
             WriteRepository.Create(tagItem);
         }
@@ -115,17 +122,17 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
         {
             WriteRepository.Delete(tagItem);
         }
-        new TagBusiness().CountItemsInTag(tagId);
+        new TagBusiness().CountItemsInTag(tag.Id);
         OnTagToggled?.Invoke(tagItem);
     }
 
-    public void PutInTag(string entityType, long tagId, Guid entityGuid)
+    public void PutInTag(Guid tagGuid, Guid entityGuid)
     {
-        if (IsInTag(entityType, entityGuid, tagId))
+        if (IsInTag(entityGuid, tagGuid))
         {
             return;
         }
-        ToggleTag(entityType, tagId, entityGuid);
+        ToggleTag(tagGuid, entityGuid);
     }
 
     public void RemoveEntity(string entityType, Guid entityGuid)
@@ -143,10 +150,10 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
         }
     }
 
-    public bool IsInTag(string entityType, Guid entityGuid, long tagId)
+    public bool IsInTag(Guid entityGuid, Guid tagGuid)
     {
-        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-        var tagItem = ReadRepository.All.Any(i => i.EntityGuid == entityGuid && i.TagId == tagId);
+        var tag = new TagBusiness().GetByGuid(tagGuid);
+        var tagItem = ReadRepository.All.Any(i => i.EntityGuid == entityGuid && i.TagId == tag.Id);
         return tagItem;
     }
 }
