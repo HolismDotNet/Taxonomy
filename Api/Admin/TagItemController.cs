@@ -20,4 +20,15 @@ public class TagItemController : Controller<TagItemView, TagItem>
         }
         listParameters.AddFilter<TagItemView>(i => i.EntityGuid, EntityGuid);
     };
+
+    [HttpPost]
+    public object PutInTags(List<Guid> tagGuids)
+    {
+        return new 
+        {
+            EntityType,
+            EntityGuid,
+            tagGuids = tagGuids
+        };
+    }
 }
