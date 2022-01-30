@@ -33,7 +33,7 @@
                 },
                 {
                     "name": "Order",
-                    "type": "int",
+                    "type": "long",
                     "isNullable": true
                 },
                 {
@@ -84,7 +84,7 @@
                 },
                 {
                     "name": "Order",
-                    "type": "int",
+                    "type": "long",
                     "isNullable": true
                 }
             ],
@@ -126,7 +126,7 @@
                 },
                 {
                     "name": "Order",
-                    "type": "int",
+                    "type": "long",
                     "isNullable": true
                 },
                 {
@@ -166,7 +166,7 @@
                 },
                 {
                     "name": "Order",
-                    "type": "int",
+                    "type": "long",
                     "isNullable": true
                 }
             ],

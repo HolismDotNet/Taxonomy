@@ -261,7 +261,7 @@ public class HierarchyBusiness : Business<Hierarchy, Hierarchy>
         hierarchyNode.HasDefaultIcon = !hierarchy.IconGuid.HasValue;
         hierarchyNode.ParentId = parentHierarchy?.Id;
         hierarchyNode.ItemsCount = hierarchy.ItemsCount;
-        hierarchyNode.UrlKey = hierarchy.UrlKey;
+        hierarchyNode.Slug = hierarchy.Slug;
         hierarchyNode.Level = parentHierarchy == null ? 1 : (parentHierarchy.Level + 1);
         hierarchyNode.Children = new List<HierarchyNode>();
         return hierarchyNode;
@@ -346,13 +346,13 @@ public class HierarchyBusiness : Business<Hierarchy, Hierarchy>
 
     public override void Validate(Hierarchy model)
     {
-        model.Title.Ensure().IsSomething("عنوان دسته بندی فراهم نشده است");
+        model.Title.Ensure().IsSomething("Title is not provided");
         if (model.ParentId.HasValue)
         {
             var parentHierarchy = Get(model.ParentId.Value);
             if (parentHierarchy == null)
             {
-                throw new ClientException("دسته بندی والد وجود ندارد");
+                throw new ClientException("Parent hierarchy does not exist");
             }
         }
         model.EntityTypeGuid.Ensure().IsNotEmpty();
@@ -378,7 +378,7 @@ public class HierarchyBusiness : Business<Hierarchy, Hierarchy>
         }
         if (hierarchies.Count > 1)
         {
-            throw new ClientException($"بیش از یک دسته بندی با عنوان {title} یافت شد");
+            throw new ClientException($"More than one hierarchy is found with this title");
         }
         return hierarchies.FirstOrDefault();
     }
@@ -388,17 +388,7 @@ public class HierarchyBusiness : Business<Hierarchy, Hierarchy>
         var hierarchies = GetList(i => i.Code == code);
         if (hierarchies.Count > 1)
         {
-            throw new ClientException($"بیش از یک دسته بندی با کد {code} یافت شد");
-        }
-        return hierarchies.FirstOrDefault();
-    }
-
-    public Hierarchy GetByUrlKey(string urlKey)
-    {
-        var hierarchies = GetList(i => i.UrlKey == urlKey);
-        if (hierarchies.Count > 1)
-        {
-            throw new ClientException($"بیش از یک دسته بندی با کلید URL {urlKey} یافت شد");
+            throw new ClientException($"More than one hierarchy is found with this code");
         }
         return hierarchies.FirstOrDefault();
     }

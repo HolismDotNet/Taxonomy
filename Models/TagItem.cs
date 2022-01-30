@@ -1,6 +1,6 @@
 namespace Taxonomy;
 
-public class TagItem : IEntity
+public class TagItem : IEntity, IOrder
 {
     public TagItem()
     {
@@ -13,7 +13,7 @@ public class TagItem : IEntity
 
     public Guid EntityGuid { get; set; }
 
-    public int? Order { get; set; }
+    public long? Order { get; set; }
 
     public dynamic RelatedItems { get; set; }
 }

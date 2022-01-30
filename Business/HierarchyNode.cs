@@ -33,7 +33,7 @@ public class HierarchyNode
 
     public int? ItemsCount { get; set; }
 
-    public string UrlKey { get; set; }
+    public string Slug { get; set; }
 
     public int Level { get; set; }
 

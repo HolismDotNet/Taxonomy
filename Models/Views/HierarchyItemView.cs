@@ -1,6 +1,6 @@
 namespace Taxonomy;
 
-public class HierarchyItemView : IEntity
+public class HierarchyItemView : IEntity, IOrder
 {
     public HierarchyItemView()
     {
@@ -13,7 +13,7 @@ public class HierarchyItemView : IEntity
 
     public Guid EntityGuid { get; set; }
 
-    public int? Order { get; set; }
+    public long? Order { get; set; }
 
     public dynamic RelatedItems { get; set; }
 }

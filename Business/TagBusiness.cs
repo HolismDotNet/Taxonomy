@@ -133,7 +133,7 @@ public class TagBusiness : Business<Tag, Tag>
         }
         var tag = new Tag();
         tag.Name = name;
-        tag.UrlKey = name.Kebaberize();
+        tag.Slug = name.Kebaberize();
         Create(entityType, tag);
         return tag;
     }

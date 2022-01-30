@@ -1,6 +1,6 @@
 namespace Taxonomy;
 
-public class Tag : IGuidEntity
+public class Tag : IGuidEntity, ISlug, IOrder
 {
     public Tag()
     {
@@ -23,7 +23,7 @@ public class Tag : IGuidEntity
 
     public string Description { get; set; }
 
-    public int? Order { get; set; }
+    public long? Order { get; set; }
 
     public bool? Show { get; set; }
 

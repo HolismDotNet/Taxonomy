@@ -1,6 +1,6 @@
 namespace Taxonomy;
 
-public class Hierarchy : IGuidEntity
+public class Hierarchy : IGuidEntity, ISlug, IOrder
 {
     public Hierarchy()
     {
@@ -25,7 +25,7 @@ public class Hierarchy : IGuidEntity
 
     public string Description { get; set; }
 
-    public int? Order { get; set; }
+    public long? Order { get; set; }
 
     public bool? Show { get; set; }
 
