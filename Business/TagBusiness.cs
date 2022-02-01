@@ -85,7 +85,7 @@ public class TagBusiness : Business<Tag, Tag>
         WriteRepository.Update(tag);
     }
 
-    public string ChangeIcon(long tagId, byte[] bytes)
+    public Tag ChangeIcon(long tagId, byte[] bytes)
     {
         var tag = Get(tagId);
         if (tag.IconGuid.HasValue)
@@ -96,7 +96,8 @@ public class TagBusiness : Business<Tag, Tag>
         tag.IconGuid = Guid.NewGuid();
         Storage.UploadImage(thumbnail.GetBytes(), tag.IconGuid.Value, TagIconsContainerName);
         WriteRepository.Update(tag);
-        return Storage.GetImageUrl(TagIconsContainerName, tag.IconGuid.Value);
+        tag = Get(tagId);
+        return tag;
     }
 
     public void RemoveIcon(long tagId)
