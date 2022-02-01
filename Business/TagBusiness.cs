@@ -60,7 +60,7 @@ public class TagBusiness : Business<Tag, Tag>
 
     protected override void ModifyItemBeforeReturning(Tag item)
     {
-        // item.RelatedItems.IconUrl = GetIconUrl(item);
+        item.RelatedItems.IconUrl = GetIconUrl(item);
         item.RelatedItems.HasDefaultIcon = !item.IconGuid.HasValue;
         base.ModifyItemBeforeReturning(item);
     }
