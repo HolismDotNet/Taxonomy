@@ -18,7 +18,7 @@ public class TagController : Controller<Tag, Tag>
 
     public override Action<Tag, UpsertMode> PreUpsertion => (tag, upsertMode) =>
     {
-        var entityType = HttpContext.ExtractProperty("entityType");
+        var entityType = HttpContext.ExtractProperty("entityType").ToString();
         tag.EntityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
     };
 
