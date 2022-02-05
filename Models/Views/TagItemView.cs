@@ -13,7 +13,7 @@ public class TagItemView : IEntity, IOrder
 
     public Guid EntityGuid { get; set; }
 
-    public long? Order { get; set; }
+    public long Order { get; set; }
 
     public string TagName { get; set; }
 

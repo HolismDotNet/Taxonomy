@@ -25,8 +25,6 @@ public class Hierarchy : IEntity, IGuid, ISlug, IOrder, IParent
 
     public string Description { get; set; }
 
-    public long? Order { get; set; }
-
     public bool? Show { get; set; }
 
     public int? ItemsCount { get; set; }
@@ -36,6 +34,8 @@ public class Hierarchy : IEntity, IGuid, ISlug, IOrder, IParent
     public int? Level { get; set; }
 
     public bool? IsLeaf { get; set; }
+
+    public long Order { get; set; }
 
     public dynamic RelatedItems { get; set; }
 }

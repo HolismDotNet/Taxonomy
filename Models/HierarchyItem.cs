@@ -13,7 +13,7 @@ public class HierarchyItem : IEntity, IOrder
 
     public Guid EntityGuid { get; set; }
 
-    public long? Order { get; set; }
+    public long Order { get; set; }
 
     public dynamic RelatedItems { get; set; }
 }

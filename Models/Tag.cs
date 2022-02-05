@@ -23,13 +23,13 @@ public class Tag : IEntity, IGuid, ISlug, IOrder
 
     public string Description { get; set; }
 
-    public long? Order { get; set; }
-
     public bool? Show { get; set; }
 
     public int? ItemsCount { get; set; }
 
     public string Slug { get; set; }
+
+    public long Order { get; set; }
 
     public dynamic RelatedItems { get; set; }
 }
