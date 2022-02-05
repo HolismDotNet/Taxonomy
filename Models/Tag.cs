@@ -1,6 +1,6 @@
 namespace Taxonomy;
 
-public class Tag : IGuidEntity, ISlug, IOrder
+public class Tag : IEntity, IGuid, ISlug, IOrder
 {
     public Tag()
     {

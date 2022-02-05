@@ -1,6 +1,6 @@
 namespace Taxonomy;
 
-public class Hierarchy : IGuidEntity, ISlug, IOrder
+public class Hierarchy : IEntity, IGuid, ISlug, IOrder, IParent
 {
     public Hierarchy()
     {
