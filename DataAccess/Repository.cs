@@ -26,6 +26,14 @@ public class Repository
         }
     }
 
+    public static Repository<Taxonomy.HierarchyView> HierarchyView
+    {
+        get
+        {
+            return new Repository<Taxonomy.HierarchyView>(new TaxonomyContext());
+        }
+    }
+
     public static Repository<Taxonomy.TagItem> TagItem
     {
         get

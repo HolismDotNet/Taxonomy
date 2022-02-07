@@ -1,8 +1,6 @@
-// namespace Taxonomy;
+namespace Taxonomy;
 
-// public class HierarchyController : Controller<HierarchyView, Hierarchy>
-// {
-//     public override ReadBusiness<HierarchyView> ReadBusiness => new HierarchyBusiness();
-
-//     public override Business<HierarchyView, Hierarchy> Business => new HierarchyBusiness();
-// }
+public class HierarchyController : TreeController<HierarchyView, Hierarchy>
+{
+    public override TreeBusiness<HierarchyView, Hierarchy> Business => new HierarchyBusiness();
+}

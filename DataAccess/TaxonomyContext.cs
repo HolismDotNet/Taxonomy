@@ -10,6 +10,8 @@ public class TaxonomyContext : DatabaseContext
 
     public DbSet<Taxonomy.HierarchyItemView> HierarchyItemViews { get; set; }
 
+    public DbSet<Taxonomy.HierarchyView> HierarchyViews { get; set; }
+
     public DbSet<Taxonomy.TagItem> TagItems { get; set; }
 
     public DbSet<Taxonomy.TagItemView> TagItemViews { get; set; }

@@ -167,6 +167,23 @@
     ],
     "views": [
         {
+            "name": "HierarchyViews",
+            "query": [
+                "with recursive R as (",
+                "    select Id, ParentId, Title, '/' as Path",
+                "    from Hierarchies",
+                "    where ParentId is null",
+                "    union all",
+                "    select H.Id, H.ParentId, H.Title, Path + ('/' + H.Title) as Path",
+                "    from Hierarchies H",
+                "    inner join R",
+                "    on H.ParentId = R.Id",
+                ")",
+                "select *",
+                "from R"
+            ]
+        },
+        {
             "name": "HierarchyItemViews",
             "query": [
                 "select *",
