@@ -2,59 +2,59 @@ namespace Taxonomy;
 
 public class Repository
 {
-    public static Repository<Taxonomy.Hierarchy> Hierarchy
+    public static Write<Taxonomy.Hierarchy> Hierarchy
     {
         get
         {
-            return new Repository<Taxonomy.Hierarchy>(new TaxonomyContext());
+            return new Write<Taxonomy.Hierarchy>(new TaxonomyContext());
         }
     }
 
-    public static Repository<Taxonomy.HierarchyItem> HierarchyItem
+    public static Write<Taxonomy.HierarchyItem> HierarchyItem
     {
         get
         {
-            return new Repository<Taxonomy.HierarchyItem>(new TaxonomyContext());
+            return new Write<Taxonomy.HierarchyItem>(new TaxonomyContext());
         }
     }
 
-    public static Repository<Taxonomy.HierarchyItemView> HierarchyItemView
+    public static Write<Taxonomy.HierarchyItemView> HierarchyItemView
     {
         get
         {
-            return new Repository<Taxonomy.HierarchyItemView>(new TaxonomyContext());
+            return new Write<Taxonomy.HierarchyItemView>(new TaxonomyContext());
         }
     }
 
-    public static Repository<Taxonomy.HierarchyView> HierarchyView
+    public static Write<Taxonomy.HierarchyView> HierarchyView
     {
         get
         {
-            return new Repository<Taxonomy.HierarchyView>(new TaxonomyContext());
+            return new Write<Taxonomy.HierarchyView>(new TaxonomyContext());
         }
     }
 
-    public static Repository<Taxonomy.TagItem> TagItem
+    public static Write<Taxonomy.TagItem> TagItem
     {
         get
         {
-            return new Repository<Taxonomy.TagItem>(new TaxonomyContext());
+            return new Write<Taxonomy.TagItem>(new TaxonomyContext());
         }
     }
 
-    public static Repository<Taxonomy.TagItemView> TagItemView
+    public static Write<Taxonomy.TagItemView> TagItemView
     {
         get
         {
-            return new Repository<Taxonomy.TagItemView>(new TaxonomyContext());
+            return new Write<Taxonomy.TagItemView>(new TaxonomyContext());
         }
     }
 
-    public static Repository<Taxonomy.Tag> Tag
+    public static Write<Taxonomy.Tag> Tag
     {
         get
         {
-            return new Repository<Taxonomy.Tag>(new TaxonomyContext());
+            return new Write<Taxonomy.Tag>(new TaxonomyContext());
         }
     }
 }

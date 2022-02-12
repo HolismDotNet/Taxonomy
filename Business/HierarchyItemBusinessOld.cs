@@ -2,9 +2,9 @@
 
 // public class HierarchyItemBusiness : Business<HierarchyItem, HierarchyItem>
 // {
-//     protected override Repository<HierarchyItem> WriteRepository => Repository.HierarchyItem;
+//     protected override Write<HierarchyItem> Write => Repository.HierarchyItem;
 
-//     protected override ReadRepository<HierarchyItem> ReadRepository => Repository.HierarchyItem;
+//     protected override Read<HierarchyItem> Read => Repository.HierarchyItem;
 
 //     private static Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>> entitiesInfoAugmenter = new Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>>();
 
@@ -25,7 +25,7 @@
 
 //     public void UpdateOrder(long hierarchyItemId, int newOrder)
 //     {
-//         var hierarchyItem = WriteRepository.Get(hierarchyItemId);
+//         var hierarchyItem = Write.Get(hierarchyItemId);
 //         hierarchyItem.Order = newOrder;
 //         Update(hierarchyItem);
 //     }
@@ -33,7 +33,7 @@
 //     public List<HierarchyItemNode> GetItemHierarchies(string entityType, Guid entityGuid)
 //     {
 //         var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-//         var hierarchyIds = ReadRepository.All.Where(i => i.EntityGuid == entityGuid).Select(i => i.HierarchyId).ToList();
+//         var hierarchyIds = Read.All.Where(i => i.EntityGuid == entityGuid).Select(i => i.HierarchyId).ToList();
 //         var hierarchies = new HierarchyBusiness().GetHierarchy(entityType);
 //         var hierarchyItems = new List<HierarchyItemNode>();
 //         foreach (var hierarchy in hierarchies)
@@ -56,14 +56,14 @@
 
 //     public int GetCountOfItemsInHierarchy(Hierarchy hierarchy)
 //     {
-//         var count = ReadRepository.All.Count(i => i.HierarchyId == hierarchy.Id);
+//         var count = Read.All.Count(i => i.HierarchyId == hierarchy.Id);
 //         return count;
 //     }
 
 //     public List<HierarchyItem> GetAllItems(long hierarchyId)
 //     {
 //         var hierarchy = new HierarchyBusiness().Get(hierarchyId);
-//         var allItems = ReadRepository.All.Where(i => i.HierarchyId == hierarchyId).OrderBy(i => i.Order).ThenBy(i => i.Id).ToList();
+//         var allItems = Read.All.Where(i => i.HierarchyId == hierarchyId).OrderBy(i => i.Order).ThenBy(i => i.Id).ToList();
 //         if (entitiesInfoAugmenter.ContainsKey(hierarchy.EntityTypeGuid))
 //         {
 //             var entityGuids = allItems.Select(i => i.EntityGuid).ToList();
@@ -105,7 +105,7 @@
 //         listParameters.AddFilter<HierarchyItem>(i => i.HierarchyId, hierarchyId.ToString());
 //         listParameters.AddSort<HierarchyItem>(i => i.Order, SortDirection.Ascending);
 //         listParameters.AddSort<HierarchyItem>(i => i.Id, SortDirection.Ascending);
-//         var entityGuids = WriteRepository
+//         var entityGuids = Write
 //             .All
 //             .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
 //             .ApplyListParametersAndGetTotalCount(listParameters)
@@ -124,7 +124,7 @@
 //     public ListResult<Guid> GetEntityGuids(ListParameters listParameters, List<Guid> excludedEntityGuids)
 //     {
 //         CheckExcludedEntitiesCount(excludedEntityGuids);
-//         var entityGuids = WriteRepository
+//         var entityGuids = Write
 //             .All
 //             .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
 //             .ApplyListParametersAndGetTotalCount(listParameters)
@@ -137,18 +137,18 @@
 //         var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
 //         entityGuid.Ensure().IsNotEmpty();
 //         hierarchyId.Ensure().IsGreaterThanZero();
-//         var hierarchyItem = WriteRepository.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
+//         var hierarchyItem = Write.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
 //         if (hierarchyItem == null)
 //         {
 //             hierarchyItem = new HierarchyItem();
 //             hierarchyItem.EntityGuid = entityGuid;
 //             hierarchyItem.HierarchyId = hierarchyId;
 //             hierarchyItem.Order = 1;
-//             WriteRepository.Create(hierarchyItem);
+//             Write.Create(hierarchyItem);
 //         }
 //         else
 //         {
-//             WriteRepository.Delete(hierarchyItem);
+//             Write.Delete(hierarchyItem);
 //         }
 //         new HierarchyBusiness().CountItemsInHierarchy(hierarchyId);
 //         OnHierarchyToggled?.Invoke(hierarchyItem);
@@ -168,33 +168,33 @@
 //         var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
 //         var query = $@"
 //             delete
-//             from {WriteRepository.TableName}
+//             from {Write.TableName}
 //             where EntityGuid = '{entityGuid}'
 //             ";
-//         WriteRepository.Run(query);
+//         Write.Run(query);
 //     }
 
 //     public void RemoveOrphanEntities(string entityType, List<Guid> entityGuids)
 //     {
 //         var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-//         var orphanHierarchyItems = WriteRepository.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
+//         var orphanHierarchyItems = Write.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
 //         foreach (var orphanHierarchyItem in orphanHierarchyItems)
 //         {
-//             WriteRepository.Delete(orphanHierarchyItem);
+//             Write.Delete(orphanHierarchyItem);
 //         }
 //     }
 
 //     public List<long> GetItemHierarchyIds(string entityType, Guid entityGuid)
 //     {
 //         var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-//         var hierarchyItems = ReadRepository.All.Where(i => i.EntityGuid == entityGuid).Select(i => i.HierarchyId).Distinct().ToList();
+//         var hierarchyItems = Read.All.Where(i => i.EntityGuid == entityGuid).Select(i => i.HierarchyId).Distinct().ToList();
 //         return hierarchyItems;
 //     }
 
 //     public bool IsInHierarchy(string entityType, Guid entityGuid, long hierarchyId)
 //     {
 //         var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-//         var hierarchyItem = ReadRepository.All.Any(i => i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
+//         var hierarchyItem = Read.All.Any(i => i.EntityGuid == entityGuid && i.HierarchyId == hierarchyId);
 //         return hierarchyItem;
 //     }
 // }

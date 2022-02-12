@@ -4,9 +4,9 @@ public class TagBusiness : Business<Tag, Tag>
 {
     public const string TagIconsContainerName = "tagicons";
 
-    protected override Repository<Tag> WriteRepository => Repository.Tag;
+    protected override Read<Tag> Read => Repository.Tag;
 
-    protected override ReadRepository<Tag> ReadRepository => Repository.Tag;
+    protected override Write<Tag> Write => Repository.Tag;
 
     public Tag Create(string entityType, Tag tag)
     {
@@ -34,14 +34,14 @@ public class TagBusiness : Business<Tag, Tag>
         {
             tag.ItemsCount = new TagItemBusiness().GetCountOfItemsInTag(tag);
         }
-        WriteRepository.BulkUpdate(tags);
+        Write.BulkUpdate(tags);
     }
 
     public int GetTotalTaggedItemsCount(string entityType)
     {
         var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
         CountItemsInTags();
-        var count = ReadRepository.All.Where(i => i.EntityTypeGuid == entityTypeGuid).Sum(i => i.ItemsCount) ?? 0;
+        var count = Read.All.Where(i => i.EntityTypeGuid == entityTypeGuid).Sum(i => i.ItemsCount) ?? 0;
         return count;
     }
 
@@ -75,14 +75,14 @@ public class TagBusiness : Business<Tag, Tag>
     {
         var tag = Get(id);
         tag.Name = name;
-        WriteRepository.Update(tag);
+        Write.Update(tag);
     }
 
     public void ChangeDescription(long id, string description)
     {
         var tag = Get(id);
         tag.Description = description;
-        WriteRepository.Update(tag);
+        Write.Update(tag);
     }
 
     public Tag ChangeIcon(long tagId, byte[] bytes)
@@ -95,7 +95,7 @@ public class TagBusiness : Business<Tag, Tag>
         var thumbnail = ImageHelper.MakeImageThumbnail(TaxonomyConfig.TagThumbnailWidth, null, bytes);
         tag.IconGuid = Guid.NewGuid();
         Storage.UploadImage(thumbnail.GetBytes(), tag.IconGuid.Value, TagIconsContainerName);
-        WriteRepository.Update(tag);
+        Write.Update(tag);
         tag = Get(tagId);
         return tag;
     }
@@ -108,7 +108,7 @@ public class TagBusiness : Business<Tag, Tag>
             Storage.DeleteImage(TagIconsContainerName, tag.IconGuid.Value);
         }
         tag.IconGuid = null;
-        WriteRepository.Update(tag);
+        Write.Update(tag);
     }
 
     public override void Validate(Tag model)

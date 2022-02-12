@@ -4,9 +4,9 @@
 // {
 //     public const string HierarchyIconsContainerName = "hierarchyicons";
 
-//     protected override Repository<Hierarchy> WriteRepository => Repository.Hierarchy;
+//     protected override Write<Hierarchy> Write => Repository.Hierarchy;
 
-//     protected override ReadRepository<HierarchyView> ReadRepository => Repository.HierarchyView;
+//     protected override Read<HierarchyView> Read => Repository.HierarchyView;
 
 //     public static List<Action<HierarchyNode>> HierarchyNodeAugmenters = new List<Action<HierarchyNode>>();
 
@@ -67,7 +67,7 @@
 //         {
 //             hierarchy.ItemsCount = new HierarchyItemBusiness().GetCountOfItemsInHierarchy(hierarchy);
 //         }
-//         WriteRepository.BulkUpdate(hierarchies);
+//         Write.BulkUpdate(hierarchies);
 //     }
 
 //     public int GetTotalCategorizedItemsCount(string entityType)
@@ -76,12 +76,12 @@
 //         if (entityType.IsSomething())
 //         {
 //             var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-//             var count = ReadRepository.All.Where(i => i.EntityTypeGuid == entityTypeGuid).Sum(i => i.ItemsCount) ?? 0;
+//             var count = Read.All.Where(i => i.EntityTypeGuid == entityTypeGuid).Sum(i => i.ItemsCount) ?? 0;
 //             return count;
 //         }
 //         else
 //         {
-//             var count = ReadRepository.All.Sum(i => i.ItemsCount) ?? 0;
+//             var count = Read.All.Sum(i => i.ItemsCount) ?? 0;
 //             return count;
 //         }
 //     }
@@ -118,7 +118,7 @@
 //     {
 //         item.RelatedItems.IconUrl = GetIconUrl(item);
 //         item.RelatedItems.HasDefaultIcon = !item.IconGuid.HasValue;
-//         item.RelatedItems.HasChildren = ReadRepository.All.Any(i => i.ParentId == item.Id);
+//         item.RelatedItems.HasChildren = Read.All.Any(i => i.ParentId == item.Id);
 //         base.ModifyItemBeforeReturning(item);
 //     }
 
@@ -130,7 +130,7 @@
 
 //     public List<Hierarchy> GetList(long? parentId = null)
 //     {
-//         var hierarchies = ReadRepository.All.Where(i => i.ParentId == parentId).ToList();
+//         var hierarchies = Read.All.Where(i => i.ParentId == parentId).ToList();
 //         ModifyListBeforeReturning(hierarchies);
 //         return hierarchies;
 //     }
@@ -139,14 +139,14 @@
 //     {
 //         var hierarchy = Get(id);
 //         hierarchy.Title = title;
-//         WriteRepository.Update(hierarchy);
+//         Write.Update(hierarchy);
 //     }
 
 //     public void ChangeDescription(long id, string description)
 //     {
 //         var hierarchy = Get(id);
 //         hierarchy.Description = description;
-//         WriteRepository.Update(hierarchy);
+//         Write.Update(hierarchy);
 //     }
 
 //     public List<HierarchyNode> CacheAndGetHierarchy(List<Hierarchy> hierarchies, string entityType = null)
@@ -181,7 +181,7 @@
 
 //     public List<HierarchyNode> GetRootHierarchies(string entityType = null)
 //     {
-//         var allHierarchies = ReadRepository.All.Where(i => i.ParentId == null).ToList();
+//         var allHierarchies = Read.All.Where(i => i.ParentId == null).ToList();
 //         if (entityType.IsSomething())
 //         {
 //             var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
@@ -192,7 +192,7 @@
 
 //     public List<HierarchyNode> GetHierarchies(long? parentId = null)
 //     {
-//         var allHierarchies = ReadRepository.All.Where(i => i.ParentId == parentId).ToList();
+//         var allHierarchies = Read.All.Where(i => i.ParentId == parentId).ToList();
 //         HierarchyNode parentHierarchy = null;
 //         if (parentId.HasValue)
 //         {
@@ -220,7 +220,7 @@
 
 //     public List<HierarchyNode> GetHierarchy(string entityType = null)
 //     {
-//         var query = ReadRepository.All;
+//         var query = Read.All;
 //         var allHierarchies = query.ToList();
 //         return GetHierarchy(entityType, allHierarchies);
 //     }
@@ -287,7 +287,7 @@
 //         {
 //             return simpleHierarchiesHierarchy;
 //         }
-//         var allHierarchies = ReadRepository.All.ToList();
+//         var allHierarchies = Read.All.ToList();
 //         var rootHierarchies = allHierarchies.Where(i => i.ParentId == null).Select(i => new SimpleHierarchyNode
 //         {
 //             Id = i.Id,
@@ -329,7 +329,7 @@
 //         var thumbnail = ImageHelper.MakeImageThumbnail(TaxonomyConfig.HierarchyThumbnailWidth, null, bytes);
 //         hierarchy.IconGuid = Guid.NewGuid();
 //         Storage.UploadImage(thumbnail.GetBytes(), hierarchy.IconGuid.Value, HierarchyIconsContainerName);
-//         WriteRepository.Update(hierarchy);
+//         Write.Update(hierarchy);
 //         return Storage.GetImageUrl(HierarchyIconsContainerName, hierarchy.IconGuid.Value);
 //     }
 
@@ -341,7 +341,7 @@
 //             Storage.DeleteImage(HierarchyIconsContainerName, hierarchy.IconGuid.Value);
 //         }
 //         hierarchy.IconGuid = null;
-//         WriteRepository.Update(hierarchy);
+//         Write.Update(hierarchy);
 //     }
 
 //     public override void Validate(Hierarchy model)
