@@ -5,16 +5,14 @@
             "name": "Hierarchies",
             "hasGuid": true,
             "hasOrder": true,
+            "hasSlug": true,
+            "hasKey": true,
             "columns": [
                 {
                     "name": "EntityTypeGuid"
                 },
                 {
                     "name": "Title"
-                },
-                {
-                    "name": "Code",
-                    "isNullable": true
                 },
                 {
                     "name": "IconGuid",
@@ -40,11 +38,6 @@
                 {
                     "name": "ItemsCount",
                     "type": "int",
-                    "isNullable": true
-                },
-                {
-                    "name": "Slug",
-                    "isUnique": true,
                     "isNullable": true
                 },
                 {
@@ -179,8 +172,12 @@
                 "    inner join R",
                 "    on H.ParentId = R.Id",
                 ")",
-                "select *",
-                "from R"
+                "select",
+                "  h.*,",
+                "  R.Path",
+                "from R",
+                "inner join Hierarchies h",
+                "on R.Id = h.Id"
             ]
         },
         {

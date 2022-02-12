@@ -1,6 +1,6 @@
 namespace Taxonomy;
 
-public class Hierarchy : IEntity, IGuid, ISlug, IOrder, IParent
+public class Hierarchy : IEntity, IGuid, IKey, IOrder, IParent
 {
     public Hierarchy()
     {
@@ -15,8 +15,6 @@ public class Hierarchy : IEntity, IGuid, ISlug, IOrder, IParent
 
     public string Title { get; set; }
 
-    public string Code { get; set; }
-
     public Guid? IconGuid { get; set; }
 
     public string IconSvg { get; set; }
@@ -29,11 +27,11 @@ public class Hierarchy : IEntity, IGuid, ISlug, IOrder, IParent
 
     public int? ItemsCount { get; set; }
 
-    public string Slug { get; set; }
-
     public int? Level { get; set; }
 
     public bool? IsLeaf { get; set; }
+
+    public string Key { get; set; }
 
     public long Order { get; set; }
 
