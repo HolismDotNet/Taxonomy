@@ -15,4 +15,12 @@ public class HierarchyBusiness : TreeBusiness<HierarchyView, Hierarchy>
         Create(hierarchy);
         return Get(hierarchy.Id);
     }
+
+    public HierarchyView UpdateTitle(Guid hierarchyGuid, string title)
+    {
+        var hierarchy = Write.Get(i => i.Guid == hierarchyGuid);
+        hierarchy.Title = title;
+        Update(hierarchy);
+        return Get(hierarchy.Id);
+    }
 }
