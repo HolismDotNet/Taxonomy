@@ -24,7 +24,8 @@
                 },
                 {
                     "name": "ParentId",
-                    "isNullable": true
+                    "isNullable": true,
+                    "cascadeDelete": true
                 },
                 {
                     "name": "Description",

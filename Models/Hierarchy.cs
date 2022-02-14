@@ -1,6 +1,6 @@
 namespace Taxonomy;
 
-public class Hierarchy : IEntity, IGuid, IKey, IOrder, IParent
+public class Hierarchy : IEntity, IGuid, ISlug, IKey, IOrder, IParent
 {
     public Hierarchy()
     {
@@ -34,6 +34,8 @@ public class Hierarchy : IEntity, IGuid, IKey, IOrder, IParent
     public string Key { get; set; }
 
     public long Order { get; set; }
+
+    public string Slug { get; set; }
 
     public dynamic RelatedItems { get; set; }
 }
