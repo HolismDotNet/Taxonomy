@@ -37,9 +37,9 @@ public class HierarchyView : IEntity, IGuid, ISlug, IKey, IOrder, IParent
 
     public bool? IsLeaf { get; set; }
 
-    public string Key { get; set; }
-
     public string Slug { get; set; }
+
+    public string Key { get; set; }
 
     public string Path { get; set; }
 
