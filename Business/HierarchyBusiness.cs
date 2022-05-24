@@ -6,6 +6,13 @@ public class HierarchyBusiness : TreeBusiness<HierarchyView, Hierarchy>
 
     protected override Write<Hierarchy> Write => Repository.Hierarchy;
 
+    public List<HierarchyView> GetTree(string entityType)
+    {
+        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
+        var hierarchyViews = GetList(i => i.EntityTypeGuid == entityTypeGuid);
+        return GetTree(hierarchyViews);
+    }
+
     public HierarchyView Create(string entityType, string title, long? parentId)
     {
         var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);

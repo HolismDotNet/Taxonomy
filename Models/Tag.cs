@@ -1,6 +1,6 @@
 namespace Taxonomy;
 
-public class Tag : IEntity, IGuid, ISlug, IOrder
+public class Tag : IEntity, IGuid, ISlug, IKey, IOrder
 {
     public Tag()
     {
@@ -15,7 +15,7 @@ public class Tag : IEntity, IGuid, ISlug, IOrder
 
     public string Name { get; set; }
 
-    public string Code { get; set; }
+    public Guid? ImageGuid { get; set; }
 
     public Guid? IconGuid { get; set; }
 
@@ -23,13 +23,15 @@ public class Tag : IEntity, IGuid, ISlug, IOrder
 
     public string Description { get; set; }
 
-    public bool? Show { get; set; }
+    public bool? IsActive { get; set; }
 
     public int? ItemsCount { get; set; }
 
-    public string Slug { get; set; }
+    public string Key { get; set; }
 
     public long Order { get; set; }
+
+    public string Slug { get; set; }
 
     public dynamic RelatedItems { get; set; }
 }

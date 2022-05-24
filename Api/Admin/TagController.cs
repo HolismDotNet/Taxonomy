@@ -12,7 +12,7 @@ public class TagController : Controller<Tag, Tag>
     [HttpGet]
     public List<Tag> EntityTypeTags(string entityType)
     {
-        var tags = new TagBusiness().GetEntityTypeTags(entityType);
+        var tags = new TagBusiness().GetTags(entityType);
         return tags;
     }
 

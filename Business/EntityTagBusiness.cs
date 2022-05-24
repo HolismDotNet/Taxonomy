@@ -1,14 +1,14 @@
 ﻿namespace Taxonomy;
 
-public class TagItemBusiness : Business<TagItemView, TagItem>
+public class EntityTagBusiness : Business<EntityTagView, EntityTag>
 {
-    protected override Write<TagItem> Write => Repository.TagItem;
+    protected override Write<EntityTag> Write => Repository.EntityTag;
 
-    protected override Read<TagItemView> Read => Repository.TagItemView;
+    protected override Read<EntityTagView> Read => Repository.EntityTagView;
 
     private static Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>> entitiesInfoAugmenter = new Dictionary<Guid, Func<List<Guid>, Dictionary<Guid, object>>>();
 
-    public static Action<TagItem> OnTagToggled;
+    public static Action<EntityTag> OnTagToggled;
 
     public void RegisterEntityInfoAugmenter(string entityType, Func<List<Guid>, Dictionary<Guid, object>> augmenter)
     {
@@ -23,20 +23,13 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
         }
     }
 
-    public void UpdateOrder(long tagItemId, int newOrder)
-    {
-        var tagItem = Write.Get(tagItemId);
-        tagItem.Order = newOrder;
-        Update(tagItem);
-    }
-
-    public List<TagItemView> GetItemTags(string entityType, Guid entityGuid)
+    public List<EntityTagView> GetItemTags(string entityType, Guid entityGuid)
     {
        var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-       var tagItems = Read.All
+       var entityTags = Read.All
         .Where(i => i.EntityGuid == entityGuid)
         .ToList();
-        return tagItems;
+        return entityTags;
     }
 
     public int GetCountOfItemsInTag(Tag tag)
@@ -45,18 +38,18 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
         return count;
     }
 
-    public List<TagItemView> GetAllItems(long tagId)
+    public List<EntityTagView> GetAllItems(long tagId)
     {
         var tag = new TagBusiness().Get(tagId);
-        var allItems = Read.All.Where(i => i.TagId == tagId).OrderBy(i => i.Order).ThenBy(i => i.Id).ToList();
+        var allItems = Read.All.Where(i => i.TagId == tagId).ToList();
         if (entitiesInfoAugmenter.ContainsKey(tag.EntityTypeGuid))
         {
             var entityGuids = allItems.Select(i => i.EntityGuid).ToList();
             var entityInfoList = entitiesInfoAugmenter[tag.EntityTypeGuid](entityGuids);
-            var tagItemsWithEntityInfo = allItems.Where(i => entityInfoList.ContainsKey(i.EntityGuid)).ToList();
-            foreach (var tagItem in tagItemsWithEntityInfo)
+            var entityTagsWithEntityInfo = allItems.Where(i => entityInfoList.ContainsKey(i.EntityGuid)).ToList();
+            foreach (var entityTag in entityTagsWithEntityInfo)
             {
-                ExpandoObjectExtensions.AddProperty(tagItem.RelatedItems, new EntityTypeBusiness().GetName(tag.EntityTypeGuid), entityInfoList[tagItem.EntityGuid]);
+                ExpandoObjectExtensions.AddProperty(entityTag.RelatedItems, new EntityTypeBusiness().GetName(tag.EntityTypeGuid), entityInfoList[entityTag.EntityGuid]);
             }
         }
         return allItems;
@@ -67,14 +60,13 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
         CheckExcludedEntitiesCount(excludedEntityGuids);
         var listParameters = ListParameters.Create();
         listParameters.PageNumber = pageNumber;
-        listParameters.AddFilter<TagItem>(i => i.TagId, tagId.ToString());
-        listParameters.AddSort<TagItem>(i => i.Order, SortDirection.Ascending);
-        listParameters.AddSort<TagItem>(i => i.Id, SortDirection.Ascending);
+        listParameters.AddFilter<EntityTag>(i => i.TagId, tagId.ToString());
+        listParameters.AddSort<EntityTag>(i => i.Id, SortDirection.Ascending);
         var entityGuids = Write
             .All
             .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
             .ApplyListParametersAndGetTotalCount(listParameters)
-            .Convert<TagItem, Guid>(i => i.EntityGuid);
+            .Convert<EntityTag, Guid>(i => i.EntityGuid);
         return entityGuids;
     }
 
@@ -93,13 +85,13 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
             .All
             .Where(i => !excludedEntityGuids.Contains(i.EntityGuid))
             .ApplyListParametersAndGetTotalCount(listParameters)
-            .Convert<TagItem, Guid>(i => i.EntityGuid);
+            .Convert<EntityTag, Guid>(i => i.EntityGuid);
         return entityGuids;
     }
 
     public void UpsertTags(Guid entityGuid, List<Guid> tagGuids)
     {
-        Database.Open(Repository.Tag.ConnectionString).Run($"delete from TagItems where EntityGuid = '{entityGuid}'");
+        Database.Open(Repository.Tag.ConnectionString).Run($"delete from EntityTags where EntityGuid = '{entityGuid}'");
         foreach (var tagGuid in tagGuids)
         {
             PutInTag(entityGuid, tagGuid);
@@ -110,21 +102,20 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
     {
         tagGuid.Ensure().IsNotEmpty();
         var tag = new TagBusiness().GetByGuid(tagGuid);
-        var tagItem = Write.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.TagId == tag.Id);
-        if (tagItem == null)
+        var entityTag = Write.All.FirstOrDefault(i => i.EntityGuid == entityGuid && i.TagId == tag.Id);
+        if (entityTag == null)
         {
-            tagItem = new TagItem();
-            tagItem.EntityGuid = entityGuid;
-            tagItem.TagId = tag.Id;
-            tagItem.Order = 1;
-            Write.Create(tagItem);
+            entityTag = new EntityTag();
+            entityTag.EntityGuid = entityGuid;
+            entityTag.TagId = tag.Id;
+            Write.Create(entityTag);
         }
         else
         {
-            Write.Delete(tagItem);
+            Write.Delete(entityTag);
         }
         new TagBusiness().CountItemsInTag(tag.Id);
-        OnTagToggled?.Invoke(tagItem);
+        OnTagToggled?.Invoke(entityTag);
     }
 
     public void PutInTag(Guid entityGuid, Guid tagGuid)
@@ -144,17 +135,17 @@ public class TagItemBusiness : Business<TagItemView, TagItem>
     public void RemoveOrphanEntities(string entityType, List<Guid> entityGuids)
     {
         var entityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
-        var orphanTagItems = Write.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
-        foreach (var orphanTagItem in orphanTagItems)
+        var orphanEntityTags = Write.All.Where(i => !entityGuids.Contains(i.EntityGuid)).ToList();
+        foreach (var orphanEntityTag in orphanEntityTags)
         {
-            Write.Delete(orphanTagItem);
+            Write.Delete(orphanEntityTag);
         }
     }
 
     public bool IsInTag(Guid entityGuid, Guid tagGuid)
     {
         var tag = new TagBusiness().GetByGuid(tagGuid);
-        var tagItem = Read.All.Any(i => i.EntityGuid == entityGuid && i.TagId == tag.Id);
-        return tagItem;
+        var entityTag = Read.All.Any(i => i.EntityGuid == entityGuid && i.TagId == tag.Id);
+        return entityTag;
     }
 }

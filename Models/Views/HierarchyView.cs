@@ -15,6 +15,8 @@ public class HierarchyView : IEntity, IGuid, ISlug, IKey, IOrder, IParent
 
     public string Title { get; set; }
 
+    public Guid? ImageGuid { get; set; }
+
     public Guid? IconGuid { get; set; }
 
     public string IconSvg { get; set; }
@@ -23,7 +25,7 @@ public class HierarchyView : IEntity, IGuid, ISlug, IKey, IOrder, IParent
 
     public string Description { get; set; }
 
-    public bool? Show { get; set; }
+    public bool? IsActive { get; set; }
 
     public int? ItemsCount { get; set; }
 

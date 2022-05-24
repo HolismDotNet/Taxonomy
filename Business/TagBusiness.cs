@@ -16,7 +16,7 @@ public class TagBusiness : Business<Tag, Tag>
         return Create(tag);
     }
 
-    public List<Tag> GetEntityTypeTags(string entityType)
+    public List<Tag> GetTags(string entityType)
     {
         if (entityType.IsNothing())
         {
@@ -32,7 +32,7 @@ public class TagBusiness : Business<Tag, Tag>
         var tags = GetAll();
         foreach (var tag in tags)
         {
-            tag.ItemsCount = new TagItemBusiness().GetCountOfItemsInTag(tag);
+            tag.ItemsCount = new EntityTagBusiness().GetCountOfItemsInTag(tag);
         }
         Write.BulkUpdate(tags);
     }
@@ -48,7 +48,7 @@ public class TagBusiness : Business<Tag, Tag>
     public void CountItemsInTag(long tagId)
     {
         var tag = Get(tagId);
-        tag.ItemsCount = new TagItemBusiness().GetCountOfItemsInTag(tag);
+        tag.ItemsCount = new EntityTagBusiness().GetCountOfItemsInTag(tag);
         Update(tag);
     }
 
@@ -119,7 +119,7 @@ public class TagBusiness : Business<Tag, Tag>
 
     protected override void PreCreation(Tag model)
     {
-        model.Show = true;
+        model.IsActive = true;
     }
 
     public Tag GetByName(string name)

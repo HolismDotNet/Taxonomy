@@ -15,6 +15,10 @@
                     "name": "Title"
                 },
                 {
+                    "name": "ImageGuid",
+                    "isNullable": true
+                },
+                {
                     "name": "IconGuid",
                     "isNullable": true
                 },
@@ -32,7 +36,7 @@
                     "isNullable": true
                 },
                 {
-                    "name": "Show",
+                    "name": "IsActive",
                     "type": "boolean",
                     "isNullable": true
                 },
@@ -64,21 +68,20 @@
             ]
         },
         {
-            "name": "HierarchyItems",
-            "hasOrder": true,
+            "name": "EntityHierarchies",
             "columns": [
                 {
-                    "name": "HierarchyId"
+                    "name": "EntityGuid"
                 },
                 {
-                    "name": "EntityGuid"
+                    "name": "HierarchyId"
                 }
             ],
             "indexes": [
                 {
                     "columns": [
-                        "HierarchyId",
-                        "EntityGuid"
+                        "EntityGuid",
+                        "HierarchyId"
                     ],
                     "isUnique": true
                 }
@@ -87,6 +90,8 @@
         {
             "name": "Tags",
             "hasGuid": true,
+            "hasSlug": true,
+            "hasKey": true,
             "hasOrder": true,
             "columns": [
                 {
@@ -96,7 +101,7 @@
                     "name": "Name"
                 },
                 {
-                    "name": "Code",
+                    "name": "ImageGuid",
                     "isNullable": true
                 },
                 {
@@ -112,18 +117,13 @@
                     "isNullable": true
                 },
                 {
-                    "name": "Show",
+                    "name": "IsActive",
                     "type": "boolean",
                     "isNullable": true
                 },
                 {
                     "name": "ItemsCount",
                     "type": "int",
-                    "isNullable": true
-                },
-                {
-                    "name": "Slug",
-                    "isUnique": true,
                     "isNullable": true
                 }
             ],
@@ -138,21 +138,20 @@
             ]
         },
         {
-            "name": "TagItems",
-            "hasOrder": true,
+            "name": "EntityTags",
             "columns": [
                 {
-                    "name": "TagId"
+                    "name": "EntityGuid"
                 },
                 {
-                    "name": "EntityGuid"
+                    "name": "TagId"
                 }
             ],
             "indexes": [
                 {
                     "columns": [
-                        "TagId",
-                        "EntityGuid"
+                        "EntityGuid",
+                        "TagId"
                     ],
                     "isUnique": true
                 }
@@ -182,20 +181,20 @@
             ]
         },
         {
-            "name": "HierarchyItemViews",
+            "name": "EntityHierarchyViews",
             "query": [
                 "select *",
-                "from HierarchyItems"
+                "from EntityHierarchies"
             ]
         },
         {
-            "name": "TagItemViews",
+            "name": "EntityTagViews",
             "query": [
                 "select",
                 "  ti.*,",
                 "  t.`Name` as TagName,",
                 "  t.Guid as TagGuid",
-                "from TagItems ti",
+                "from EntityTags ti",
                 "inner join Tags t",
                 "on ti.TagId = t.Id"
             ]

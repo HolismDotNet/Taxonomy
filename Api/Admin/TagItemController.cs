@@ -1,10 +1,10 @@
 namespace Taxonomy;
 
-public class TagItemController : Controller<TagItemView, TagItem>
+public class EntityTagController : Controller<EntityTagView, EntityTag>
 {
-    public override ReadBusiness<TagItemView> ReadBusiness => new TagItemBusiness();
+    public override ReadBusiness<EntityTagView> ReadBusiness => new EntityTagBusiness();
 
-    public override Business<TagItemView, TagItem> Business => new TagItemBusiness();
+    public override Business<EntityTagView, EntityTag> Business => new EntityTagBusiness();
 
     [BindProperty(SupportsGet = true)]
     public Guid? EntityGuid { get; set; }
@@ -15,7 +15,7 @@ public class TagItemController : Controller<TagItemView, TagItem>
         {
             throw new ClientException("EntityGuid is not provided");
         }
-        listParameters.AddFilter<TagItemView>(i => i.EntityGuid, EntityGuid);
+        listParameters.AddFilter<EntityTagView>(i => i.EntityGuid, EntityGuid);
     };
 
     [HttpPost]
@@ -25,7 +25,7 @@ public class TagItemController : Controller<TagItemView, TagItem>
         {
             throw new ClientException("EntityGuid is not provided");
         }
-        new TagItemBusiness().UpsertTags(EntityGuid.Value, tagGuids);
+        new EntityTagBusiness().UpsertTags(EntityGuid.Value, tagGuids);
         return OkJson();
     }
 }
