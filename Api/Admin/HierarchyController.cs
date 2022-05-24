@@ -6,10 +6,10 @@ public class HierarchyController : TreeController<HierarchyView, Hierarchy>
 
     public override TreeBusiness<HierarchyView, Hierarchy> Business => new HierarchyBusiness();
 
-    [BindProperty(SupportsGet=true)]
-    public string EntityType { set; set; }
+    [BindProperty(SupportsGet = true)]
+    public string EntityType { get; set; }
 
-    protected override void PreCreation(Hierarchy model)
+    public override Action<Hierarchy> PreCreation => model =>
     {
         if (EntityType.IsNothing())
         {
@@ -17,6 +17,5 @@ public class HierarchyController : TreeController<HierarchyView, Hierarchy>
         }
         var entityTypeGuid = new EntityTypeBusiness().GetGuid(EntityType);
         model.EntityTypeGuid = entityTypeGuid;
-        base.PreCreation(model);
-    }
+    };
 }
