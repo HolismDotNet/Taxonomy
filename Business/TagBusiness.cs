@@ -54,7 +54,7 @@ public class TagBusiness : Business<Tag, Tag>
 
     public Tag GetTag(string name)
     {
-        var tag = GetOrNull(i => i.Name == name);
+        var tag = Get(i => i.Name == name);
         return tag;
     }
 
