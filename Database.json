@@ -63,7 +63,7 @@
                         "ParentId",
                         "Title"
                     ],
-                    "isUnique": true
+                    "unique": true
                 }
             ]
         },
@@ -83,7 +83,7 @@
                         "EntityGuid",
                         "HierarchyId"
                     ],
-                    "isUnique": true
+                    "unique": true
                 }
             ]
         },
@@ -133,7 +133,7 @@
                         "EntityTypeGuid",
                         "Name"
                     ],
-                    "isUnique": true
+                    "unique": true
                 }
             ]
         },
@@ -153,7 +153,7 @@
                         "EntityGuid",
                         "TagId"
                     ],
-                    "isUnique": true
+                    "unique": true
                 }
             ]
         }
