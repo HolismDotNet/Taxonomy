@@ -16,44 +16,44 @@
                 },
                 {
                     "name": "ImageGuid",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "IconGuid",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "IconSvg",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "ParentId",
-                    "isNullable": true,
+                    "nullable": true,
                     "cascadeDelete": true
                 },
                 {
                     "name": "Description",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "IsActive",
                     "type": "boolean",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "ItemsCount",
                     "type": "int",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "Level",
                     "type": "int",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "IsLeaf",
                     "type": "boolean",
-                    "isNullable": true
+                    "nullable": true
                 }
             ],
             "indexes": [
@@ -102,29 +102,29 @@
                 },
                 {
                     "name": "ImageGuid",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "IconGuid",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "IconSvg",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "Description",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "IsActive",
                     "type": "boolean",
-                    "isNullable": true
+                    "nullable": true
                 },
                 {
                     "name": "ItemsCount",
                     "type": "int",
-                    "isNullable": true
+                    "nullable": true
                 }
             ],
             "indexes": [
