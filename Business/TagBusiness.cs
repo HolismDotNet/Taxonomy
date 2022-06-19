@@ -149,4 +149,12 @@ public class TagBusiness : Business<Tag, Tag>
         Create(entityType, tag);
         return tag;
     }
+
+    public Tag ToggleIsActive(long id)
+    {
+        var tag = Get(id);
+        tag.IsActive = tag.IsActive == null ? true : !tag.IsActive;
+        Update(tag);
+        return tag;
+    }
 }

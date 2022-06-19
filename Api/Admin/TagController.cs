@@ -35,4 +35,11 @@ public class TagController : Controller<Tag, Tag>
         var tag = new TagBusiness().ChangeIcon(tagId[0].ToLong(), bytes);
         return tag;
     }
+
+    [HttpPost]
+    public Tag ToggleIsActive(long id)
+    {
+        var tag = new TagBusiness().ToggleIsActive(id);
+        return tag;
+    }
 }
