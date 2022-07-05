@@ -31,4 +31,11 @@ public class HierarchyBusiness : TreeBusiness<HierarchyView, Hierarchy>
         Update(hierarchy);
         return Get(hierarchy.Id);
     }
+
+    public void SetImage(long hierarchyId, Guid imageGuid)
+    {
+        var hierarchy = Write.Get(hierarchyId);
+        hierarchy.ImageGuid = imageGuid;
+        Update(hierarchy);
+    }
 }
