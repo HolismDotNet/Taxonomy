@@ -85,32 +85,6 @@ public class TagBusiness : Business<Tag, Tag>
         Write.Update(tag);
     }
 
-    public Tag ChangeIcon(long tagId, byte[] bytes)
-    {
-        var tag = Get(tagId);
-        if (tag.IconGuid.HasValue)
-        {
-            Storage.DeleteImage(TagIconsContainerName, tag.IconGuid.Value);
-        }
-        var thumbnail = ImageHelper.MakeImageThumbnail(TaxonomyConfig.TagThumbnailWidth, null, bytes);
-        tag.IconGuid = Guid.NewGuid();
-        Storage.UploadImage(thumbnail.GetBytes(), tag.IconGuid.Value, TagIconsContainerName);
-        Write.Update(tag);
-        tag = Get(tagId);
-        return tag;
-    }
-
-    public void RemoveIcon(long tagId)
-    {
-        var tag = Get(tagId);
-        if (tag.IconGuid.HasValue)
-        {
-            Storage.DeleteImage(TagIconsContainerName, tag.IconGuid.Value);
-        }
-        tag.IconGuid = null;
-        Write.Update(tag);
-    }
-
     public override void Validate(Tag model)
     {
         model.Name.Ensure().IsSomething("Name is not provided");
@@ -147,14 +121,6 @@ public class TagBusiness : Business<Tag, Tag>
         tag.Name = name;
         tag.Slug = name.Kebaberize();
         Create(entityType, tag);
-        return tag;
-    }
-
-    public Tag ToggleIsActive(long id)
-    {
-        var tag = Get(id);
-        tag.IsActive = tag.IsActive == null ? true : !tag.IsActive;
-        Update(tag);
         return tag;
     }
 }

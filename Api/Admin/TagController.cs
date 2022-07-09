@@ -21,25 +21,4 @@ public class TagController : Controller<Tag, Tag>
         var entityType = HttpContext.ExtractProperty("entityType").ToString();
         tag.EntityTypeGuid = new EntityTypeBusiness().GetGuid(entityType);
     };
-
-    [FileUploadChecker]
-    [HttpPost]
-    public Tag SetImage(IFormFile file)
-    {
-        var tagId = Request.Query["tagId"];
-        if (tagId.Count == 0)
-        {
-            throw new ClientException("Please provide tagId");
-        }
-        var bytes = file.OpenReadStream().GetBytes();
-        var tag = new TagBusiness().ChangeIcon(tagId[0].ToLong(), bytes);
-        return tag;
-    }
-
-    [HttpPost]
-    public Tag ToggleIsActive(long id)
-    {
-        var tag = new TagBusiness().ToggleIsActive(id);
-        return tag;
-    }
 }
